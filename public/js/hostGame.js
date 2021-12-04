@@ -162,8 +162,6 @@ socket.on('GameOver', function(data){
     document.getElementById('winner5').innerHTML = "5. " + data.num5;
 });
 
-
-
 socket.on('getTime', function(player){
     socket.emit('time', {
         player: player,

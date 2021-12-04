@@ -1,7 +1,7 @@
 var socket = io();
 var questionNum = 1; //Starts at two because question 1 is already present
 
-function updateDatabase(){
+function updateDatabase(){    
     var questions = [];
     var name = document.getElementById('name').value;
     for(var i = 1; i <= questionNum; i++){

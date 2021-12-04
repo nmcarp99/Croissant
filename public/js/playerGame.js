@@ -18,6 +18,10 @@ socket.on('connect', function() {
 
 socket.on('noGameFound', function(){
     window.location.href = '../../';//Redirect user to 'join game' page 
+    var alertList = document.querySelectorAll('.alert')
+    var alerts =  [].slice.call(alertList).map(function (element) {
+      return new bootstrap.Alert(element)
+    })
 });
 
 function answerSubmitted(num){

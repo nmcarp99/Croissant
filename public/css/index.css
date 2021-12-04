@@ -1,90 +1,224 @@
-@keyframes bgcolor {
-    0% {
-        background-color: #45a3e5
-    }
-
-    30% {
-        background-color: #66bf39
-    }
-
-    60% {
-        background-color: #eb670f
-    }
-
-    90% {
-        background-color: #f35
-    }
-
-    100% {
-        background-color: #864cbf
-    }
+HTML SCSSResult Skip Results Iframe EDIT ON html {
+  box-sizing: border-box;
+  font-size: 10px;
 }
-
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+body, ul, li {
+  margin: 0;
+  padding: 0;
+}
+@keyframes loadingB {
+  0% {
+    width: 15px;
+  }
+  50% {
+    width: 35px;
+  }
+  100% {
+    width: 15px;
+  }
+}
+li {
+  list-style: none;
+}
+p, h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+}
+a {
+  text-decoration: none;
+}
+input {
+  border-style: none;
+  background: transparent;
+  outline: none;
+}
+button {
+  padding: 0;
+  background: none;
+  border: none;
+  outline: none;
+}
 body {
-    -webkit-animation: bgcolor 20s infinite;
-    animation: bgcolor 10s infinite;
-    -webkit-animation-direction: alternate;
-    animation-direction: alternate;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background-image: radial-gradient(circle at 0% 0%, #373b52, #252736 51%, #1d1e26);
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border: white;
+  display: flex;
+  margin: 0;
+  min-height: 100vh;
 }
-#title{
-    font-family: 'Raleway', sans-serif;
-    text-align: center;
-    font-size: 50px;
-    color: white;
+h1.demo {
+  text-align: center;
+  font-size: 2.4rem;
+  font-weight: normal;
+  margin-bottom: 1rem;
+  background-image: linear-gradient(to right, #B294FF, #57E6E6, #FEFFB8, #57E6E6, #B294FF, #57E6E6);
+  background-size: 500% auto;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: gradient 3s linear infinite;
 }
-#name{
-    width: 50%;
-    padding: 12px 0px;
-    margin: 8px 0;
-    display: block;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    margin-right: auto;
-    margin-left: auto;
-    font-size: 20px;
-    text-align: center;
+a.demo {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: normal;
+  color: rgba(202, 205, 239, 0.8);
+  margin-bottom: 3rem;
 }
-#pin{
-    width: 50%;
-    padding: 12px 0px;
-    margin: 8px 0;
-    display: block;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    margin-right: auto;
-    margin-left: auto;
-    font-size: 20px;
-    text-align: center;
+
+@keyframes gradient {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 100% 0;
+  }
 }
-#label{
-    display: block;
-    text-align: center;
-    font-size: 25px;
-    font-family: 'Raleway', sans-serif;
-    color: white;
+
+.webflow-style-input{
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  width: 200%;
+  max-width: 450px;
+  max-height: 20px;
+  margin: 0 auto;
+  border-radius: 2px;
+  padding: 1.4rem 2rem 1.6rem;
+  background: rgba(57, 63, 84, 0.8);
+}
+
+.webflow-style-input.hide {
+  display: none;
+}
+
+.username.hide {
+  display: none;
+}
+.username{
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  width: 200%;
+  max-width: 450px;
+  max-height: 20px;
+  margin: 0 auto;
+  border-radius: 2px;
+  padding: 1.4rem 2rem 1.6rem;
+  background: rgba(57, 63, 84, 0.8);
+}
+
+.username:after {
+  content: "";
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  z-index: 999;
+  height: 4px;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  background-position: 0% 0%;
+  background-image: linear-gradient(to right, #B294FF, #57E6E6, #FEFFB8, #57E6E6, #B294FF, #57E6E6);
+
+  background-size: 500% auto;
+  animation: gradient 3s linear infinite;
+}
+.username input {
+  height: 75px;
+  position: relative;
+  top: -30px;
+  z-index: 1;
+  color: #BFD2FF;
+  line-height: 2rem;
+  font-size: 1.8rem;
+}
+.username input::-webkit-input-placeholder {
+  color: #7881A1;
+}
+
+.username button:hover {
+  color: #BFD2FF;
+}
+
+.webflow-style-input:after {
+  content: "";
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  z-index: 999;
+  height: 4px;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  background-position: 0% 0%;
+  background-image: linear-gradient(to right, #B294FF, #57E6E6, #FEFFB8, #57E6E6, #B294FF, #57E6E6);
+
+  background-size: 500% auto;
+  animation: gradient 3s linear infinite;
+}
+.webflow-style-input input {
+  height: 75px;
+  position: relative;
+  top: -30px;
+  z-index: 1;
+  color: #BFD2FF;
+  line-height: 2rem;
+  font-size: 1.8rem;
+}
+.webflow-style-input input::-webkit-input-placeholder {
+  color: #7881A1;
+}
+
+.webflow-style-input button:hover {
+  color: #BFD2FF;
+}
+
+ion-icon {
+  color: #7881A1;
+  font-size: 2.4rem;
+  line-height: 3rem;
+  vertical-align: middle;
+  transform: scale(125%);
+  position: relative;
+  top: -9px;
+  left: 80px;
+  transition: color 0.25s;
+}
+ion-icon:hover {
+  color: #BFD2FF;
+}
+
+:root {
+    --text: rgba(57, 63, 84, 0.8);
+    --background-color:#373b52;
+    --outline: #7881A1;
 }
 #host{
-    color: white;
-    text-decoration: none;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: normal;
+  background-image: linear-gradient(to right, #B294FF, #57E6E6, #FEFFB8, #57E6E6, #B294FF, #57E6E6);
+  background-size: 500% auto;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: gradient 3s linear infinite;
+  
 }
 #host:hover{
     text-decoration:underline;
 }
-#joinButton{
-    width: 50%;
-    background-color: #4CAF50;
-    color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    display: block;
-    margin-right: auto;
-    margin-left: auto;
-    font-size: 20px;
-    background-color: #3A3B3A;
-    font-family: 'Raleway', sans-serif;
+.alert {
+  position: fixed;
+  top: 10px;
+  right: -580px;
+  background-color: #e84118;
+  color: white;
+  border: #c23616;
 }

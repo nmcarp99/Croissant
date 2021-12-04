@@ -15,13 +15,15 @@ socket.on('showGamePin', function(data){
 });
 
 //Adds player's name to screen and updates player count
-socket.on('updatePlayerLobby', function(data){
-    
-    document.getElementById('players').value = "";
-    
-    for(var i = 0; i < data.length; i++){
-        document.getElementById('players').value += data[i].name + "\n";
-    }
+socket.on('updatePlayerLobby', data => {
+
+  alert(data);
+  
+  document.getElementById('players').value = "";
+  
+  for(var i = 0; i < data.length; i++){
+      document.getElementById('players').value += data[i].name + "\n";
+  }
     
 });
 
