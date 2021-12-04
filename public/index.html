@@ -33,12 +33,12 @@
 
             <h1 class="demo">Croissant</h1>
             
-            <div class="webflow-style-input" id="gamePinForm">
-              <input class="" name="pin" type="text" id = "pin" placeholder="Game PIN" onkeypress = 'return event.charCode >= 48 && event.charCode <= 57' />
+            <div class="joinForm" id="gamePinForm">
+              <input class="" name="pin" type="text" id = "pin" placeholder="Game PIN" onkeypress = 'return event.charCode >= 48 && event.charCode <= 57' autofocus />
               <button type="submit" onclick="ifGameExists()"><ion-icon name="arrow-forward" /></button>
             </div>
             
-            <div class="username hide" id="userNameForm">
+            <div style="display: none;" class="joinForm" id="userNameForm">
               <input class="" name="name" type="text" id = "name" placeholder="Username" />
               <button type="submit" onclick="joinGame()"><ion-icon name="arrow-forward" /></button>
             </div>

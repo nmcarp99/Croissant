@@ -11,26 +11,29 @@ socket.on('connect', function() {
 });
 
 socket.on('showGamePin', function(data){
-   document.getElementById('gamePinText').innerHTML = data.pin;
+  let pinText = document.getElementById('gamePinText');
+
+  pinText.innerHTML = data.pin;
+  pinText.style.animation = "none";
 });
 
 //Adds player's name to screen and updates player count
 socket.on('updatePlayerLobby', data => {
 
-  alert(data);
-  
-  document.getElementById('players').value = "";
+  let output = "";
   
   for(var i = 0; i < data.length; i++){
-      document.getElementById('players').value += data[i].name + "\n";
+    output += "<h1>" + data[i].name + "</h1>";
   }
-    
+
+  document.getElementById('players').innerHTML = output;
 });
 
 //Tell server to start game if button is clicked
 function startGame(){
     socket.emit('startGame');
 }
+
 function endGame(){
     window.location.href = "/";
 }
@@ -42,6 +45,5 @@ socket.on('gameStarted', function(id){
 });
 
 socket.on('noGameFound', function(){
-   window.location.href = '../../';//Redirect user to 'join game' page
+   window.location.href = '../../'; //Redirect user to 'join game' page
 });
-

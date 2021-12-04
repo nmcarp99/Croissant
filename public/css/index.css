@@ -81,7 +81,7 @@ a.demo {
   }
 }
 
-.webflow-style-input{
+.joinForm {
   position: relative;
   display: flex;
   flex-direction: row;
@@ -93,28 +93,7 @@ a.demo {
   padding: 1.4rem 2rem 1.6rem;
   background: rgba(57, 63, 84, 0.8);
 }
-
-.webflow-style-input.hide {
-  display: none;
-}
-
-.username.hide {
-  display: none;
-}
-.username{
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  width: 200%;
-  max-width: 450px;
-  max-height: 20px;
-  margin: 0 auto;
-  border-radius: 2px;
-  padding: 1.4rem 2rem 1.6rem;
-  background: rgba(57, 63, 84, 0.8);
-}
-
-.username:after {
+.joinForm:after {
   content: "";
   position: absolute;
   left: 0px;
@@ -130,7 +109,7 @@ a.demo {
   background-size: 500% auto;
   animation: gradient 3s linear infinite;
 }
-.username input {
+.joinForm input {
   height: 75px;
   position: relative;
   top: -30px;
@@ -139,47 +118,19 @@ a.demo {
   line-height: 2rem;
   font-size: 1.8rem;
 }
-.username input::-webkit-input-placeholder {
+.joinForm input::-webkit-input-placeholder {
   color: #7881A1;
 }
 
-.username button:hover {
+.joinForm button:hover {
   color: #BFD2FF;
 }
-
-.webflow-style-input:after {
-  content: "";
-  position: absolute;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
-  z-index: 999;
-  height: 4px;
-  border-bottom-left-radius: 2px;
-  border-bottom-right-radius: 2px;
-  background-position: 0% 0%;
-  background-image: linear-gradient(to right, #B294FF, #57E6E6, #FEFFB8, #57E6E6, #B294FF, #57E6E6);
-
-  background-size: 500% auto;
-  animation: gradient 3s linear infinite;
+.true-false-label {
+  width: 50px;
+  text-align: center;
+  font-family: 'Raleway', sans-serif;
+  color: black;
 }
-.webflow-style-input input {
-  height: 75px;
-  position: relative;
-  top: -30px;
-  z-index: 1;
-  color: #BFD2FF;
-  line-height: 2rem;
-  font-size: 1.8rem;
-}
-.webflow-style-input input::-webkit-input-placeholder {
-  color: #7881A1;
-}
-
-.webflow-style-input button:hover {
-  color: #BFD2FF;
-}
-
 ion-icon {
   color: #7881A1;
   font-size: 2.4rem;
@@ -201,6 +152,7 @@ ion-icon:hover {
     --outline: #7881A1;
 }
 #host{
+  display: block;
   text-align: center;
   font-size: 1.8rem;
   font-weight: normal;
@@ -208,6 +160,7 @@ ion-icon:hover {
   background-size: 500% auto;
   -webkit-background-clip: text;
   color: transparent;
+  margin-top: 20px;
   animation: gradient 3s linear infinite;
   
 }

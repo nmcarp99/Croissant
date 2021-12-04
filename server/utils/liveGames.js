@@ -3,7 +3,7 @@ class LiveGames {
         this.games = [];
     }
     addGame(pin, hostId, gameLive, gameData){
-        var game = {pin, hostId, gameLive, gameData};
+        var game = {pin, hostId, gameLive, gameData, joining: false };
         this.games.push(game);
         return game;
     }

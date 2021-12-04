@@ -23,18 +23,22 @@ function ifGameExists() {
 }
 
 function switchToUsername() {
-  
-  $('.webflow-style-input').addClass('hide');
-  $('.username').removeClass('hide');
+  $('#gamePinForm').hide();
+  $('#userNameForm').show();
+  $('#name').focus();  
 }
 
 function joinGame() {
-  var params = [document.getElementById('pin').value, document.getElementById('name').value];
-  window.location.href = '../player/?pin=' + params[0] + "&name=" + params[1];
+  var params = {
+    pin: document.getElementById('pin').value,
+    name: document.getElementById('name').value,
+    socketId: socket.id
+  };
+
+  window.location.href = '../player/?' + $.param(params);
 }
 
 socket.on("invalidPin", () => {
-  console.log('invalid pin');
   invalidPin();
 });
 socket.on('validCode', () => {
@@ -47,4 +51,9 @@ window.addEventListener("load", () => {
       ifGameExists();
     }
   });
+  document.getElementById("userNameForm").addEventListener("keydown", e => {
+    if (e.code == "Enter") {
+      joinGame();
+    }
+  })
 });
