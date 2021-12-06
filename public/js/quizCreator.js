@@ -15,8 +15,9 @@ function updateDatabase(){
         questions.push({"question": question, "answers": answers, "correct": correct})
     }
     
-    var quiz = {id: 0, "name": name, "questions": questions};
+    var quiz = {id: 0, "name": name, "questions": questions, "owner": localStorage.getItem("user")};
     socket.emit('newQuiz', quiz);
+    location.href = "/create";
 }
 
 function addQuestion(){
@@ -98,9 +99,5 @@ function cancelQuiz(){
         window.location.href = "../";
     }
 }
-
-socket.on('startGameFromCreator', function(data){
-    window.location.href = "../../host/?id=" + data;
-});
 
 window.addEventListener("load", addQuestion);

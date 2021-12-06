@@ -1,0 +1,98 @@
+body {
+	 font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	 color: black;
+	 font-weight: 300;
+}
+ body ::-webkit-input-placeholder {
+	 font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	 color: #7881A1;
+	 font-weight: 300;
+}
+ body :-moz-placeholder {
+	 font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	 color: #7881A1;
+	 opacity: 1;
+	 font-weight: 300;
+}
+ body ::-moz-placeholder {
+	 font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	 color: #7881A1;
+	 opacity: 1;
+	 font-weight: 300;
+}
+ body :-ms-input-placeholder {
+	 font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	 color: #7881A1;
+	 font-weight: 300;
+}
+ .wrapper {
+	 background-image: -webkit-linear-gradient(top left,#50a3a2 0%,#53e3a6 100%);
+	 background-image: -moz-linear-gradient(top left,#50a3a2 0%,#53e3a6 100%);
+	 background-image: -o-linear-gradient(top left,#50a3a2 0%,#53e3a6 100%);
+	 background-image: radial-gradient(circle at 0% 0%, #373b52, #252736 51%, #1d1e26);
+	 position: absolute;
+
+	 width: 100%;
+	 height: 100%;
+	 overflow: hidden;
+}
+ .wrapper.form-success .container h1 {
+	 transform: translateY(85px);
+}
+ .container {
+	 max-width: 600px;
+	 margin: 0 auto;
+	 padding: 80px 0;
+	 height: 400px;
+	 text-align: center;
+}
+ .container h1 {
+	 font-size: 40px;
+	 transition-duration: 1s;
+	 transition-timing-function: ease-in-put;
+	 font-weight: 200;
+}
+ form {
+	 padding: 20px 0;
+	 position: relative;
+	 z-index: 2;
+}
+ form input {
+	 display: block;
+	 appearance: none;
+	 background: rgba(57, 63, 84, 0.8);
+	 width: 250px;
+	 border-radius: 3px;
+	 padding: 10px 15px;
+	 margin: 0 auto 10px auto;
+	 text-align: center;
+	 font-size: 18px;
+	 color: #7881A1;
+	 transition-duration: 0.25s;
+	 font-weight: 300;
+}
+ form input:hover {
+	 background-color: rgba(255,255,255,0.4);
+}
+ form input:focus {
+	 background-color: #7881A1;
+	 width: 300px;
+	 color: rgba(57, 63, 84, 0.8);
+}
+ form button {
+	 appearance: none;
+	 outline: 0;
+	 background: rgba(57, 63, 84, 0.8);
+	 padding: 10px 15px;
+	 color: #7881A1;
+	 border-radius: 3px;
+	 width: 250px;
+	 cursor: pointer;
+	 font-size: 18px;
+	 transition-duration: 0.25s;
+}
+
+ form button:hover {
+	 background-color: #7881A1;
+   color: rgba(57, 63, 84, 0.8);1 
+}

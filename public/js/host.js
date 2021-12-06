@@ -5,9 +5,14 @@ var params = jQuery.deparam(window.location.search);
 socket.on('connect', function() {
 
     document.getElementById('players').value = "";
+
+    const data = {
+      id: params.id,
+      uid: localStorage.user
+    };
     
     //Tell server that it is host connection
-    socket.emit('host-join', params);
+    socket.emit('host-join', data);
 });
 
 socket.on('showGamePin', function(data){
@@ -46,4 +51,8 @@ socket.on('gameStarted', function(id){
 
 socket.on('noGameFound', function(){
    window.location.href = '../../'; //Redirect user to 'join game' page
+});
+
+socket.on('doesntOwnGame', data => {
+  window.location.href = "../../";
 });

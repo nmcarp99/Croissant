@@ -14,6 +14,9 @@ socket.on('noGameFound', function(){
     window.location.href = '/';
     // this is being called. yea look at my cursor for a sec
 });
+socket.on('nameExists', () => {
+  location.href = '/?alert=nameExists';
+});
 //If the host disconnects, then the player is booted to main screen
 socket.on('hostDisconnect', function(){
     window.location.href = '../';

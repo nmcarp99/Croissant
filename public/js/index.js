@@ -1,9 +1,26 @@
 var socket = io();
 
-function invalidPin() {
+function nameExists() {
+  $("#pinMessage").html("That name already exists...");
   $("#invalidPin").animate({
     right: "10px"
   }, 1000);
+}
+
+function invalidPin() {
+  $("#pinMessage").html("We could not locate a game with that PIN, please check and try again.");
+  $("#invalidPin").animate({
+    right: "10px"
+  }, 1000);
+}
+
+function create() {
+  if (localStorage.getItem("email") == "null") {
+    location.href = "/login";
+    localStorage.setItem("returnUrl", "/create");
+    return;
+  }
+  location.href = "/create";
 }
 
 function closeInvalidPin() {
@@ -25,7 +42,7 @@ function ifGameExists() {
 function switchToUsername() {
   $('#gamePinForm').hide();
   $('#userNameForm').show();
-  $('#name').focus();  
+  $('#name').focus();
 }
 
 function joinGame() {
@@ -55,5 +72,27 @@ window.addEventListener("load", () => {
     if (e.code == "Enter") {
       joinGame();
     }
-  })
+  });
+
+  let params = $.deparam(location.search);
+
+  if (params.alert) {
+    if (params.alert == 'nameExists') {
+      nameExists();
+    }
+  }
+});
+
+function getCookieValue(name) {
+  let result = document.cookie.match("(^|[^;]+)\\s*" + name + "\\s*=\\s*([^;]+)")
+  return result ? result.pop() : ""
+}
+
+window.addEventListener("load", () => {
+  if (localStorage.user) {
+    $("#header").html(`
+      <button>My Account</button>
+      <button>Sign Out</button>
+    `);
+  }
 });

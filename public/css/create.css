@@ -24,6 +24,9 @@ body {
   background-image: radial-gradient(circle at 0% 0%, #373b52, #252736 51%, #1d1e26);
   margin: 0;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 #title{
     color: white;
@@ -40,36 +43,48 @@ body {
 #link{
     color: white;
 }
-#game-list{
-    text-align: center;
-}
 #back{
-    color: white;
     text-align: center;
 }
-#gameButton{
-    font-size:80px;
+.gameButton{
+    font-size: 30px;
+    color: white;
+    display: block;
+    text-decoration: none;
+    background: #575b72;
+    margin: 5px;
+    padding: 5px;
+    border-radius: 5px;
 }
-#gameButton:hover{
-    cursor: pointer;
+.gameButton:hover{
+  filter: brightness(130%);
 }
 button{
+    background-color: #575b72;
+    border: none;
     color: white;
     padding: 15px 50px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    margin: 10px 30px;
+    margin: 20px 90px;
     cursor: pointer;
     font-size: 20px;
     font-family: 'Raleway', sans-serif;
-    border: 3px solid;
-    border-image: linear-gradient(var(--angle), #B294FF, #57E6E6, #FEFFB8, #57E6E6, #B294FF, #57E6E6) 1;
-    animation: 10s rotate linear infinite;
-    background: #3A3B3A;
+    border-radius: 5px;
+}
+#game-list {
+    border: 2px solid;
+    border-image: linear-gradient(90deg, #B294FF 0%, #57E6E6 49%, #FC4F4F 80%, #00C0FF 100%) 1;
+    width: 75vw;
+    min-height: 20px;
+}
+#game-list h4 {
+  color: white;
+  margin: 20px;
 }
 .header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 }

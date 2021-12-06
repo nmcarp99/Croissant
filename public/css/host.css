@@ -77,9 +77,6 @@ button{
   align-items: center;
   width: 75vw;
 }
-.header.middle {
-}
-
 @keyframes gradient {
   0% {
     background-position: 0 0;

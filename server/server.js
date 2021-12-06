@@ -61,8 +61,10 @@ io.on('connection', (socket) => {
 
     //Check to see if id passed in url corresponds to id of kahoot game in database
 
+    console.log(data.uid);
+
     var dbo = client.db("kahootDB");
-    var query = { id: parseInt(data.id) };
+    var query = { id: parseInt(data.id), owner: data.uid };
     dbo.collection('kahootGames').find(query).toArray(function(err, result) {
       if (err) throw err;
 
@@ -144,8 +146,6 @@ io.on('connection', (socket) => {
 
   //When player connects for the first time
   socket.on('player-join', (params) => {
-    // MAKE SURE TO CHECK THAT THERE IS NOT A DUPLICATE-NAME IN GAME >>>
-
     console.log("Player attempting to join a game with pin of " + params.pin);
 
     var game = games.getGameByPin(parseInt(params.pin));
@@ -157,6 +157,20 @@ io.on('connection', (socket) => {
     }
 
     var hostId = game.hostId; //Get the id of host of game
+
+    players.players.forEach(player => {
+      if (player.hostId != hostId) return;
+
+      if (player.name == params.name) {
+        socket.emit("nameExists");
+
+        console.log("PLAYER ALREADY EXISTS: " + params.name);
+        console.log("Threat neutralized.");
+
+        return;
+      }
+    });
+
 
     players.addPlayer(hostId, socket.id, params.name, { score: 0, answer: 0 }); //add player to game
 
@@ -383,69 +397,6 @@ io.on('connection', (socket) => {
         fourth.score = (playersInGame[3] ? playersInGame[3].gameData.score : 0);
         fifth.score = (playersInGame[4] ? playersInGame[4].gameData.score : 0);
 
-        /*for (var i = 0; i < playersInGame.length; i++) {
-          console.log(playersInGame[i].gameData.score);
-          if (playersInGame[i].gameData.score > fifth.score) {
-            if (playersInGame[i].gameData.score > fourth.score) {
-              if (playersInGame[i].gameData.score > third.score) {
-                if (playersInGame[i].gameData.score > second.score) {
-                  if (playersInGame[i].gameData.score > first.score) {
-                    //First Place
-                    fifth.name = fourth.name;
-                    fifth.score = fourth.score;
-
-                    fourth.name = third.name;
-                    fourth.score = third.score;
-
-                    third.name = second.name;
-                    third.score = second.score;
-
-                    second.name = first.name;
-                    second.score = first.score;
-
-                    first.name = playersInGame[i].name;
-                    first.score = playersInGame[i].gameData.score;
-                  } else {
-                    //Second Place
-                    fifth.name = fourth.name;
-                    fifth.score = fourth.score;
-
-                    fourth.name = third.name;
-                    fourth.score = third.score;
-
-                    third.name = second.name;
-                    third.score = second.score;
-
-                    second.name = playersInGame[i].name;
-                    second.score = playersInGame[i].gameData.score;
-                  }
-                } else {
-                  //Third Place
-                  fifth.name = fourth.name;
-                  fifth.score = fourth.score;
-
-                  fourth.name = third.name;
-                  fourth.score = third.score;
-
-                  third.name = playersInGame[i].name;
-                  third.score = playersInGame[i].gameData.score;
-                }
-              } else {
-                //Fourth Place
-                fifth.name = fourth.name;
-                fifth.score = fourth.score;
-
-                fourth.name = playersInGame[i].name;
-                fourth.score = playersInGame[i].gameData.score;
-              }
-            } else {
-              //Fifth Place
-              fifth.name = playersInGame[i].name;
-              fifth.score = playersInGame[i].gameData.score;
-            }
-          }
-        }*/
-
         io.to(game.pin).emit('GameOver', {
           num1: first.name,
           num2: second.name,
@@ -470,15 +421,39 @@ io.on('connection', (socket) => {
   });
 
   //Give user game names data
-  socket.on('requestDbNames', function() {
+  socket.on('requestDbNames', data => {
+    var id = data;
     var dbo = client.db('kahootDB');
-    dbo.collection("kahootGames").find().toArray(function(err, res) {
+
+    const result = dbo.collection('kahootGames').find({ owner: id }).toArray(function(err, res) {
       if (err) throw err;
       socket.emit('gameNamesData', res);
+      return;
     });
-
-
   });
+
+  /*socket.on('ownsGame', data => {
+    var dbo = client.db('kahootDB');
+
+    console.log(typeof parseInt(data.id));
+    console.log(data.uid);
+
+    const query = {owner: data.uid, id: parseInt(data.id)};
+
+    var found = false;
+
+    const result = dbo.collection('kahootGames').find(query);
+    for (let i = 0; i < result.toArray().length; i++) {
+    }
+    if (result.toArray().length >0) {
+      socket.emit('doesOwnGame', data);
+      console.log('does own game');
+    }
+    else {
+      socket.emit('doesntOwnGame', data);
+      console.log('doesnt own map');
+    }
+  });*/
 
 
   socket.on('newQuiz', data => {
@@ -497,8 +472,6 @@ io.on('connection', (socket) => {
       dbo.collection("kahootGames").insertOne(game, function(err, res) {
         if (err) throw err;
       });
-
-      socket.emit('startGameFromCreator', num);
     });
   });
 });

@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Create | KahootClone</title>
+        <title>Create | Croissant</title>
         <link rel="stylesheet" href = "../css/create.css">
         <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+        <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+
+        <script src = "../socket.io/socket.io.js"></script>
+        <script src = "../js/create.js"></script>
     </head>
     <body>
       <div class="header">
         <button id = 'back' onclick = "location.href = '/'">Back</button>
-        <h1 id = "title">Start a Kahoot Game</h1>
+        <h1 id = "title">Start a Croissant Game</h1>
         <button onclick="location.href='quiz-creator/'">Create</button>
       </div>
-        <div id = "game-list">
+      <div id = "game-list">
             
-        </div>
-        
-        
-        <script src = "../socket.io/socket.io.js"></script>
-        <script src = "../js/create.js"></script>
+      </div>
     </body>
 </html>
