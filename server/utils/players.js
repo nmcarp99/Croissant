@@ -9,9 +9,9 @@ class Players {
   }
   removePlayer(playerId) {
     var player = this.getPlayer(playerId);
-
-    if (player) {
-      this.players = this.players.filter((player) => player.playerId !== playerId);
+        
+    if(player){
+        this.players = this.players.filter((player) => player.playerId !== playerId);
     }
     return player;
   }

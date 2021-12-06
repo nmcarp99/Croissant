@@ -87,6 +87,15 @@ socket.on('hostDisconnect', function(){
     window.location.href = "../../";
 });
 
+socket.on("player-disconnect", data => {
+  console.log('player-disconnect triggered');
+  console.log(data + " and params.name is " + name);
+  if (data == params.name) {
+    socket.leave(parseInt(params.pin));
+    window.location.href = "../../";
+  }
+})
+
 socket.on('playerGameData', function(data){
    for(var i = 0; i < data.length; i++){
        if(data[i].playerId == socket.id){

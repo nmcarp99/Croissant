@@ -25,14 +25,23 @@ socket.on('showGamePin', function(data){
 //Adds player's name to screen and updates player count
 socket.on('updatePlayerLobby', data => {
 
+  console.log("recieved update player lobby");
+
   let output = "";
   
   for(var i = 0; i < data.length; i++){
-    output += "<h1>" + data[i].name + "</h1>";
+    output += `<h1 class="player" onclick="removePlayer('${data[i].name.toString()}')">${data[i].name}</h1>`;
   }
 
   document.getElementById('players').innerHTML = output;
 });
+
+function removePlayer(button) {
+  const data = {
+    name: button
+  }
+  socket.emit('remove-player', data);
+}
 
 //Tell server to start game if button is clicked
 function startGame(){
@@ -50,9 +59,9 @@ socket.on('gameStarted', function(id){
 });
 
 socket.on('noGameFound', function(){
-   window.location.href = '../../'; //Redirect user to 'join game' page
+   window.location.href = '../../404'; //Redirect user to 'join game' page
 });
 
 socket.on('doesntOwnGame', data => {
-  window.location.href = "../../";
+  window.location.href = "../../404";
 });

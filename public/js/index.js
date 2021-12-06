@@ -15,7 +15,8 @@ function invalidPin() {
 }
 
 function create() {
-  if (localStorage.getItem("email") == "null") {
+  console.log(localStorage.getItem("email"));
+  if (localStorage.getItem("email") == "null" || localStorage.getItem("email") == null || localStorage.getItem("email") == undefined) {
     location.href = "/login";
     localStorage.setItem("returnUrl", "/create");
     return;

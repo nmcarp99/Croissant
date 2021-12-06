@@ -29,3 +29,8 @@ socket.on('gameStartedPlayer', function(){
   newParams.socketId = socket.id;
   window.location.href = "/player/game/?" + $.param(newParams);
 });
+
+// when the host kicks a player
+socket.on('player-disconnect', () => {
+  location.href = '/';
+});

@@ -49,7 +49,6 @@ io.on('connection', (socket) => {
 
     if (game == null || game == undefined) {
       socket.emit('invalidPin');
-      console.log("Invalid Pin");
       return;
     }
     else {
@@ -78,10 +77,7 @@ io.on('connection', (socket) => {
 
         socket.join(parseInt(game.pin));//The host is joining a room based on the pin
 
-        console.log("Host is in rooms: ");
-        console.log(socket.rooms);
-
-        console.log('Game Created with pin:', game.pin);
+        // console.log('Game Created with pin:', game.pin);
 
         //Sending game pin to host so they can display it for players to join
         socket.emit('showGamePin', {
@@ -92,6 +88,32 @@ io.on('connection', (socket) => {
       }
     });
   });
+
+  socket.on('remove-player', (data) => {
+    var game = games.getGame(socket.id);
+
+    if (!game) {
+      console.log("Player tried to remove another player... Request blocked successfully.");
+      return;
+    }
+
+    var player = players.getPlayerByName(data.name, game.hostId);
+
+    if (!player) {
+      console.log("could not find player to remove...");
+      return;
+    }
+    
+    players.removePlayer(player.playerId);
+
+    console.log("removed player \"" + player.name + "\" from host \"" + game.hostId + "\"");
+
+    var playersInGame = players.getPlayers(game.hostId); //Getting all players in game
+    
+    console.log('Sending updatePlayerLobby to ' + game.pin);
+    io.to(player.playerId).emit('player-disconnect', data.name);
+    io.to(parseInt(game.pin)).emit("updatePlayerLobby", playersInGame);
+  })
 
   //When the host connects from the game view
   socket.on('host-join-game', (data) => {
@@ -146,17 +168,19 @@ io.on('connection', (socket) => {
 
   //When player connects for the first time
   socket.on('player-join', (params) => {
-    console.log("Player attempting to join a game with pin of " + params.pin);
+    // console.log("Player attempting to join a game with pin of " + params.pin);
 
     var game = games.getGameByPin(parseInt(params.pin));
     
     if (!game || game == null) {
-      console.log("Attempted to join a nonexistent game... Threat has been neutralized.");
+      // console.log("Attempted to join a nonexistent game... Threat has been neutralized.");
       socket.emit("noGameFound");
       return;
     }
 
     var hostId = game.hostId; //Get the id of host of game
+
+    var failed = false;
 
     players.players.forEach(player => {
       if (player.hostId != hostId) return;
@@ -164,12 +188,14 @@ io.on('connection', (socket) => {
       if (player.name == params.name) {
         socket.emit("nameExists");
 
-        console.log("PLAYER ALREADY EXISTS: " + params.name);
-        console.log("Threat neutralized.");
+        // console.log("PLAYER ALREADY EXISTS: " + params.name);
+        // console.log("Threat neutralized.");
 
-        return;
+        failed = true;
       }
     });
+
+    if (failed) return;
 
 
     players.addPlayer(hostId, socket.id, params.name, { score: 0, answer: 0 }); //add player to game
@@ -180,7 +206,7 @@ io.on('connection', (socket) => {
 
     var playersInGame = players.getPlayers(hostId); //Getting all players in game
     
-    console.log('Sending updatePlayerLobby to ' + params.pin);
+    // console.log('Sending updatePlayerLobby to ' + params.pin);
     io.to(parseInt(params.pin)).emit("updatePlayerLobby", playersInGame);
 
     // check if game has already started
