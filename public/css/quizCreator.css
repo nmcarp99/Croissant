@@ -23,12 +23,16 @@ body {
   border: none;
   margin: 0;
   font-size: 125px;
-  background: rgba(0, 0, 0, 0.1);
-  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  color: gray;
   flex-grow: 1 0;
   transition: all 0.2s ease;
 }
-.editor .navigation:hover {
+.editor .navigation.enabled {
+  background: rgba(0, 0, 0, 0.1);
+  color: white;
+}
+.editor .navigation.enabled:hover {
   background: rgba(0, 0, 0, 0.3);
 }
 .editor .content {
@@ -129,4 +133,39 @@ input[type="text"] {
   justify-content: flex-start;
   align-items: center;
   margin-left: 8%;
+}
+.loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  background: black;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.loading ion-icon {
+  color: white;
+  font-size: 100px;
+  transform-origin: calc(50% - 3px);
+  animation: spin 2s ease infinite;
+}
+
+.loading h1 {
+  color: white;
+  font-size: 70px;
+  font-family: 'Raleway' sans-serif;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

@@ -37,6 +37,10 @@ function doesGameExist(game_code) {
 
 app.use(express.static(publicPath));
 
+app.get("/*", (req, res) => {
+  res.status(404).send("<script>location.href='/404';</script>").end();
+});
+
 //Starting server
 server.listen(port, () => {
   console.log("Server started on port " + port);
@@ -465,6 +469,7 @@ io.on("connection", socket => {
     var game = games.getGame(socket.id); //Get the game based on socket.id
 
     if (!game) return;
+    if (players.getPlayers(socket.id) == {}) return;
 
     game.gameLive = true;
     socket.emit("gameStarted", game.hostId); //Tell player and host that game has started
@@ -485,17 +490,16 @@ io.on("connection", socket => {
       });
   });
 
-  socket.on("getQuiz", data => {
-    console.log("getting quiz: " + data.id);
-
-    var dbo = client.db("kahootDB");
+  socket.on("getQuiz", data => {    
 
     (async () => {
+      var dbo = client.db("kahootDB");
+      
       const result = await dbo
         .collection("kahootGames")
         .find({ owner: data.uid, id: data.id })
         .toArray();
-      
+
       if (result.length == 0) {
         socket.emit("noGameFound");
       } else {
@@ -504,25 +508,40 @@ io.on("connection", socket => {
     })();
   });
 
-  socket.on("newQuiz", data => {
-    console.log("newquiz callback");
-    var dbo = client.db("kahootDB");
-    dbo
-      .collection("kahootGames")
-      .find()
-      .toArray(function(err, result) {
-        if (err) throw err;
-        var num = Object.keys(result).length;
-        if (num == 0) {
-          data.id = 1;
-          num = 1;
-        } else {
-          data.id = result[num - 1].id + 1;
-        }
-        var game = data;
-        dbo.collection("kahootGames").insertOne(game, function(err, res) {
+  socket.on("newQuiz", owner => {
+    (async () => {
+      var dbo = client.db("kahootDB");
+
+      var documents = await dbo
+        .collection("kahootGames")
+        .find()
+        .toArray();
+      
+      var newId = 1;
+      
+      if (documents.length > 0) {
+        newId = documents[documents.length - 1].id + 1;
+      }
+
+      dbo.collection("kahootGames").insertOne(
+        {
+          name: "",
+          questions: [
+            {
+              question: "",
+              answers: ["", "", "", ""],
+              correct: []
+            }
+          ],
+          id: newId,
+          owner: owner
+        },
+        (err, res) => {
           if (err) throw err;
-        });
-      });
+          
+          socket.emit("createdQuiz", newId);
+        }
+      );
+    })();
   });
 });

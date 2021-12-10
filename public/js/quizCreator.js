@@ -14,10 +14,18 @@ socket.on("connect", () => {
 
 socket.on("returnQuiz", newQuiz => {
   quiz = newQuiz;
+  
+  changeQuestion(0);
+  
+  $(".loading").fadeOut();
 });
 
 socket.on("noGameFound", () => {
-  location.href = '/create';
+  socket.emit("newQuiz", auth.currentUser.uid);
+});
+
+socket.on("createdQuiz", id => {
+  location.href = '/create/quiz-creator/?id=' + id;
 });
 
 onStateChange = user => {
@@ -142,8 +150,43 @@ function cancelQuiz() {
   }
 }
 
+function changeQuestion(relative) {
+  loadQuestion(currentQuestion + relative);
+  
+  var navigationButtons = document.getElementsByClassName("navigation");
+  
+  if (currentQuestion == 0) {
+    navigationButtons[0].disabled = true;
+    navigationButtons[0].classList.remove("enabled");
+  } else {
+    navigationButtons[0].disabled = false;
+    navigationButtons[0].classList.add("enabled");
+  }
+  
+  if (currentQuestion == quiz.questions.length - 1) {
+    navigationButtons[1].disabled = true;
+    navigationButtons[1].classList.remove("enabled");
+  } else {
+    navigationButtons[1].disabled = false;
+    navigationButtons[1].classList.add("enabled");
+  }
+}
+
 function loadQuestion(questionNum) {
   currentQuestion = questionNum;
   
-  console.log(quiz.questions[currentQuestion]);
+  var question = quiz.questions[currentQuestion];
+  
+  console.log(question);
+  
+  $("#question").val(question.question);
+  $("#title").val(quiz.name);
+  
+  var options = document.getElementsByName("option");
+  var checkBoxes = document.getElementsByName("correctAnswer");
+  
+  for (var i = 0; i < options.length; i++) {
+    options[i].value = question.answers[i];
+    checkBoxes[i].checked = question.correct.includes((i + 1).toString());
+  }
 }
