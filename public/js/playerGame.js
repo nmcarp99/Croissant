@@ -17,6 +17,10 @@ socket.on('connect', function() {
   document.getElementById('answer4').style.visibility = "visible";
 });
 
+socket.on('openShopPlayer', function(){
+  window.location.href = '../';
+});
+
 socket.on('noGameFound', function() {
   window.location.href = '../../';//Redirect user to 'join game' page 
   var alertList = document.querySelectorAll('.alert')

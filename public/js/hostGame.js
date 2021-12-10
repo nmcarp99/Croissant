@@ -100,11 +100,50 @@ socket.on('questionOver', function(playerData, correct){
     document.getElementById('square4').style.height = answer4 + "px";
     
     document.getElementById('nextQButton').style.display = "block";
-    
+    document.getElementById('openShopButton').style.display = "block";
+    document.getElementById('closeShopButton').style.display = "none";
 });
+
+function openShop() {
+    document.getElementById('openShopButton').style.display = "none";
+    document.getElementById('closeShopButton').style.display = "block"
+    document.getElementById('nextQButton').style.display = "none";
+    document.getElementById('square1').style.display = "none";
+    document.getElementById('square2').style.display = "none";
+    document.getElementById('square3').style.display = "none";
+    document.getElementById('square4').style.display = "none";
+    
+    document.getElementById('answer1').style.display = "none";
+    document.getElementById('answer2').style.display = "none";
+    document.getElementById('answer3').style.display = "none";
+    document.getElementById('answer4').style.display = "none";
+  
+    document.getElementById('shop').style.display = "block";
+    socket.emit('openShop');
+}
+
+function closeShop() {
+    document.getElementById('shop').style.display = "none";
+    document.getElementById('openShopButton').style.display = "none";
+    document.getElementById('closeShopButton').style.display = "none";
+    document.getElementById('nextQButton').style.display = "block";
+  
+    document.getElementById('square1').style.display = "inline-block";
+    document.getElementById('square2').style.display = "inline-block";
+    document.getElementById('square3').style.display = "inline-block";
+    document.getElementById('square4').style.display = "inline-block";
+    
+    document.getElementById('answer1').style.display = "block";
+    document.getElementById('answer2').style.display = "block";
+    document.getElementById('answer3').style.display = "block";
+    document.getElementById('answer4').style.display = "block";
+}
 
 function nextQuestion(){
     document.getElementById('nextQButton').style.display = "none";
+    document.getElementById('openShopButton').style.display = "none";
+    document.getElementById('closeShopButton').style.display = "none"
+  
     document.getElementById('square1').style.display = "none";
     document.getElementById('square2').style.display = "none";
     document.getElementById('square3').style.display = "none";
