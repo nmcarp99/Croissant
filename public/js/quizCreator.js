@@ -4,6 +4,7 @@ var socketConnected = false;
 var signedIn = false;
 var params;
 var quiz;
+var currentQuestion = 0;
 
 socket.on("connect", () => {
   socketConnected = true;
@@ -11,8 +12,8 @@ socket.on("connect", () => {
   loadQuiz();
 });
 
-socket.on("returnQuiz", quiz => {
-  console.log(quiz);
+socket.on("returnQuiz", newQuiz => {
+  quiz = newQuiz;
 });
 
 socket.on("noGameFound", () => {
@@ -139,4 +140,10 @@ function cancelQuiz() {
   if (confirm("Are you sure you want to exit? All work will be DELETED!")) {
     window.location.href = "../";
   }
+}
+
+function loadQuestion(questionNum) {
+  currentQuestion = questionNum;
+  
+  console.log(quiz.questions[currentQuestion]);
 }
