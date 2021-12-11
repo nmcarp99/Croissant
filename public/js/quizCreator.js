@@ -5,6 +5,7 @@ var signedIn = false;
 var params;
 var quiz;
 var currentQuestion = 0;
+var timeouts = {};
 
 socket.on("connect", () => {
   socketConnected = true;
@@ -14,9 +15,9 @@ socket.on("connect", () => {
 
 socket.on("returnQuiz", newQuiz => {
   quiz = newQuiz;
-  
+
   changeQuestion(0);
-  
+
   $(".loading").fadeOut();
 });
 
@@ -25,7 +26,7 @@ socket.on("noGameFound", () => {
 });
 
 socket.on("createdQuiz", id => {
-  location.href = '/create/quiz-creator/?id=' + id;
+  location.href = "/create/quiz-creator/?id=" + id;
 });
 
 onStateChange = user => {
@@ -38,11 +39,18 @@ onStateChange = user => {
   loadQuiz();
 };
 
+function updateQuiz() {
+  
+}
+
 function loadQuiz() {
   params = $.deparam(location.search);
 
   if (signedIn && socketConnected) {
-    socket.emit("getQuiz", { uid: auth.currentUser.uid, id: parseInt(params.id) });
+    socket.emit("getQuiz", {
+      uid: auth.currentUser.uid,
+      id: parseInt(params.id)
+    });
   }
 }
 
@@ -152,9 +160,9 @@ function cancelQuiz() {
 
 function changeQuestion(relative) {
   loadQuestion(currentQuestion + relative);
-  
+
   var navigationButtons = document.getElementsByClassName("navigation");
-  
+
   if (currentQuestion == 0) {
     navigationButtons[0].disabled = true;
     navigationButtons[0].classList.remove("enabled");
@@ -162,7 +170,7 @@ function changeQuestion(relative) {
     navigationButtons[0].disabled = false;
     navigationButtons[0].classList.add("enabled");
   }
-  
+
   if (currentQuestion == quiz.questions.length - 1) {
     navigationButtons[1].disabled = true;
     navigationButtons[1].classList.remove("enabled");
@@ -174,19 +182,49 @@ function changeQuestion(relative) {
 
 function loadQuestion(questionNum) {
   currentQuestion = questionNum;
-  
+
   var question = quiz.questions[currentQuestion];
-  
+
   console.log(question);
-  
+
   $("#question").val(question.question);
   $("#title").val(quiz.name);
-  
+
   var options = document.getElementsByName("option");
   var checkBoxes = document.getElementsByName("correctAnswer");
-  
+
   for (var i = 0; i < options.length; i++) {
     options[i].value = question.answers[i];
     checkBoxes[i].checked = question.correct.includes((i + 1).toString());
   }
 }
+
+$(() => {
+  params = $.deparam(location.search);
+  
+  var inputs = Array.from(document.getElementsByTagName("input"));
+  
+  inputs.forEach(input => {
+    if (input.type == "text") {      
+      input.addEventListener("keydown", e => {
+        var self = e.path[0];
+        
+        clearTimeout(timeouts[self]);
+        
+        timeouts[self] = setTimeout(() => {
+          updateQuiz();
+        }, 1000);
+      });
+    } else if (input.type == "checkbox") {
+      input.addEventListener("change", e => {
+        updateQuiz();
+      });
+    }
+  });
+  
+  socket.emit("updateQuiz", {
+    id: parseInt(params.id),
+    owner: auth.currentUser.uid,
+    quiz: quiz
+  });
+});

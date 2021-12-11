@@ -1,7 +1,19 @@
 var socket = io();
+var loggedIn = false;
 
-socket.on("connect", function() {
-  socket.emit("requestDbNames", localStorage.getItem("user")); //Get database names to display to user
+function deleteQuiz(id) {
+  socket.emit("deleteQuiz", {
+    id: id,
+    owner: auth.currentUser.uid
+  });
+  
+  socket.emit("requestDbNames", auth.currentUser.uid); //Get database names to display to user
+}
+
+socket.on("connect", () => {
+  if (loggedIn) {
+    socket.emit("requestDbNames", auth.currentUser.uid); //Get database names to display to user
+  }
 });
 
 socket.on("gameNamesData", function(data) {
@@ -13,7 +25,7 @@ socket.on("gameNamesData", function(data) {
         <a href="/host/?id=${data[i].id}">${data[i].name}</a>
         <div class="gameButtonIcons">
           <ion-icon name="create-outline" onclick="location.href='/create/quiz-creator/?id=${data[i].id}'"></ion-icon>
-          <ion-icon name="trash-outline"></ion-icon>
+          <ion-icon name="trash-outline" onclick="deleteQuiz(${data[i].id})"></ion-icon>
         </div>
       </div>
     `;
@@ -42,5 +54,11 @@ socket.on("gameNamesData", function(data) {
 onStateChange = user => {
   if (!user) {
     location.href = "/login";
+  }
+  
+  loggedIn = true;
+  
+  if (socket.connected) {
+    socket.emit("requestDbNames", auth.currentUser.uid); //Get database names to display to user
   }
 };

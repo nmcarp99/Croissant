@@ -38,7 +38,10 @@ function doesGameExist(game_code) {
 app.use(express.static(publicPath));
 
 app.get("/*", (req, res) => {
-  res.status(404).send("<script>location.href='/404';</script>").end();
+  res
+    .status(404)
+    .send("<script>location.href='/404';</script>")
+    .end();
 });
 
 //Starting server
@@ -490,11 +493,10 @@ io.on("connection", socket => {
       });
   });
 
-  socket.on("getQuiz", data => {    
-
+  socket.on("getQuiz", data => {
     (async () => {
       var dbo = client.db("kahootDB");
-      
+
       const result = await dbo
         .collection("kahootGames")
         .find({ owner: data.uid, id: data.id })
@@ -516,9 +518,9 @@ io.on("connection", socket => {
         .collection("kahootGames")
         .find()
         .toArray();
-      
+
       var newId = 1;
-      
+
       if (documents.length > 0) {
         newId = documents[documents.length - 1].id + 1;
       }
@@ -538,10 +540,34 @@ io.on("connection", socket => {
         },
         (err, res) => {
           if (err) throw err;
-          
+
           socket.emit("createdQuiz", newId);
         }
       );
     })();
+  });
+
+  socket.on("deleteQuiz", data => {
+    //id, owner
+
+    var dbo = client.db("kahootDB");
+
+    dbo.collection("kahootGames").deleteOne({
+      id: data.id,
+      owner: data.owner
+    });
+  });
+
+  socket.on("updateQuiz", data => {
+    var dbo = client.db("kahootDB");
+
+    dbo.collection("kahootGames").updateOne(
+      { id: data.id, owner: data.owner },
+      {
+        $set: {
+          name: data.quiz.name
+        }
+      }
+    );
   });
 });

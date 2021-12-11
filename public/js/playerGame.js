@@ -19,6 +19,7 @@ socket.on("connect", function() {
 
 socket.on("openShopPlayer", function() {
   $("#shop").show();
+  console.log($("#shop"));
 });
 
 socket.on("noGameFound", function() {
