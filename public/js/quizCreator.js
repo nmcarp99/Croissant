@@ -1,3 +1,6 @@
+const changesSavedMessage = "All changes saved to database.";
+const savingMessage = "Saving...";
+
 var socket = io();
 var questionNum = 0; //Starts at two because question 1 is already present
 var socketConnected = false;
@@ -16,6 +19,8 @@ socket.on("connect", () => {
 socket.on("returnQuiz", newQuiz => {
   quiz = newQuiz;
 
+  reloadQuestionSelect();
+
   changeQuestion(0);
 
   $(".loading").fadeOut();
@@ -29,6 +34,10 @@ socket.on("createdQuiz", id => {
   location.href = "/create/quiz-creator/?id=" + id;
 });
 
+socket.on("quizUpdated", () => {
+  $("#saveState").html(changesSavedMessage);
+});
+
 onStateChange = user => {
   if (!user) {
     location.href = "/login";
@@ -39,8 +48,92 @@ onStateChange = user => {
   loadQuiz();
 };
 
-function updateQuiz() {
+function newQuestion() {
+  quiz.questions.push({
+    question: "",
+    answers: ["", "", "", ""],
+    correct: [],
+    image: ""
+  });
+
+  loadQuestion(quiz.questions.length - 1);
+
+  reloadQuestionSelect();
   
+  updateQuiz();
+}
+
+function reloadQuestionSelect() {
+  $("#questionSelect").html("");
+
+  quiz.questions.forEach((question, i) => {
+    $("#questionSelect").append(`
+      <div class="question" id="questionSelect${i}" onclick="loadQuestion(${i})">
+        <h1>${question.question}</h1>
+        <div class="answers">
+          <p>${question.answers[0] +
+            (question.correct.includes("1") ? " ✓" : "")}</p>
+          <p>${question.answers[1] +
+            (question.correct.includes("2") ? " ✓" : "")}</p>
+          <p>${question.answers[2] +
+            (question.correct.includes("3") ? " ✓" : "")}</p>
+          <p>${question.answers[3] +
+            (question.correct.includes("4") ? " ✓" : "")}</p>
+        </div>
+      </div>
+    `);
+  });
+
+  $("#questionSelect").append(`
+    <button class="createQuestion" onclick="newQuestion()">Add Question</button>
+  `);
+
+  reloadQuestionSelectHighlight();
+}
+
+function loadImage(data) {
+  if (data != "") {
+  $("#questionContent").html(`
+    <img class="questionImage" src="${data}" />
+  `);
+  } else {
+    $("#questionContent").html(`
+      <ion-icon name="add-circle-outline"></ion-icon>
+      <p>
+        Add a picture here!
+      </p>
+    `);
+  }
+}
+
+function updateQuiz() {
+  $("#saveState").html(savingMessage);
+
+  delete quiz._id;
+
+  quiz.name = $("#title").val();
+  quiz.questions[currentQuestion].question = $("#question").val();
+
+  var options = Array.from(document.getElementsByName("option"));
+  var correctAnswers = Array.from(document.getElementsByName("correctAnswer"));
+
+  quiz.questions[currentQuestion].correct = [];
+
+  for (var i = 0; i < 4; i++) {
+    quiz.questions[currentQuestion].answers[i] = options[i].value;
+
+    if (correctAnswers[i].checked) {
+      quiz.questions[currentQuestion].correct.push((i + 1).toString());
+    }
+  }
+
+  reloadQuestionSelect();
+
+  socket.emit("updateQuiz", {
+    id: parseInt(params.id),
+    owner: auth.currentUser.uid,
+    quiz: quiz
+  });
 }
 
 function loadQuiz() {
@@ -52,6 +145,16 @@ function loadQuiz() {
       id: parseInt(params.id)
     });
   }
+}
+
+function reloadQuestionSelectHighlight() {
+  quiz.questions.forEach((question, i) => {
+    if (i == currentQuestion) {
+      $("#questionSelect" + i).css("background", "rgba(255, 255, 255, 0.4)");
+    } else {
+      $("#questionSelect" + i).css("background", "");
+    }
+  });
 }
 
 function updateDatabase() {
@@ -185,10 +288,10 @@ function loadQuestion(questionNum) {
 
   var question = quiz.questions[currentQuestion];
 
-  console.log(question);
-
   $("#question").val(question.question);
   $("#title").val(quiz.name);
+
+  loadImage(question.image);
 
   var options = document.getElementsByName("option");
   var checkBoxes = document.getElementsByName("correctAnswer");
@@ -197,34 +300,46 @@ function loadQuestion(questionNum) {
     options[i].value = question.answers[i];
     checkBoxes[i].checked = question.correct.includes((i + 1).toString());
   }
+
+  reloadQuestionSelectHighlight();
 }
 
 $(() => {
   params = $.deparam(location.search);
-  
+
+  $("#questionContent").click(() => {
+    $("#contentUpload").click();
+  });
+
+  $("#contentUpload").on("change", () => {
+    var file = $("#contentUpload").prop("files")[0];
+
+    var reader = new FileReader();
+    reader.onload = e => {
+      quiz.questions[currentQuestion].image = e.target.result;
+      loadImage(e.target.result);
+      updateQuiz();
+    };
+    reader.readAsDataURL(file);
+  });
+
   var inputs = Array.from(document.getElementsByTagName("input"));
-  
+
   inputs.forEach(input => {
-    if (input.type == "text") {      
+    if (input.type == "text") {
       input.addEventListener("keydown", e => {
         var self = e.path[0];
-        
+
         clearTimeout(timeouts[self]);
-        
+
         timeouts[self] = setTimeout(() => {
           updateQuiz();
-        }, 1000);
+        }, 250);
       });
     } else if (input.type == "checkbox") {
       input.addEventListener("change", e => {
         updateQuiz();
       });
     }
-  });
-  
-  socket.emit("updateQuiz", {
-    id: parseInt(params.id),
-    owner: auth.currentUser.uid,
-    quiz: quiz
   });
 });

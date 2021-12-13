@@ -532,7 +532,8 @@ io.on("connection", socket => {
             {
               question: "",
               answers: ["", "", "", ""],
-              correct: []
+              correct: [],
+              image: ""
             }
           ],
           id: newId,
@@ -564,10 +565,10 @@ io.on("connection", socket => {
     dbo.collection("kahootGames").updateOne(
       { id: data.id, owner: data.owner },
       {
-        $set: {
-          name: data.quiz.name
-        }
+        $set: data.quiz
       }
     );
+    
+    socket.emit("quizUpdated");
   });
 });

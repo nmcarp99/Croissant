@@ -47,12 +47,12 @@
       </h1>
       <ion-icon name="reload-outline"></ion-icon>
     </div>
-    
+
     <div class="header">
       <div class="left">
         <input id="title" type="text" placeholder="Quiz Title" />
-        <p>
-          All changes saved to database.
+        <p id="saveState">
+          No changes have been made yet...
         </p>
       </div>
       <div class="right">
@@ -65,46 +65,77 @@
       </div>
     </div>
     <div class="editor">
-      <button class="navigation" onclick="changeQuestion(-1)">‹</button>
-
-      <div class="content">
-        <div class="question">
-          <input id="question" type="text" placeholder="Type the question here..." />
-        </div>
-
-        <div class="options">
-          <div class="option">
-            <input name="option" type="text" placeholder="Type an answer option here..." />
-            <label class="container">
-              <input type="checkbox" name="correctAnswer" />
-              <span class="checkmark"></span>
-            </label>
-          </div>
-          <div class="option">
-            <input name="option" type="text" placeholder="Type an answer option here..." />
-            <label class="container">
-              <input type="checkbox" name="correctAnswer" />
-              <span class="checkmark"></span>
-            </label>
-          </div>
-          <div class="option">
-            <input name="option" type="text" placeholder="Type an answer option here..." />
-            <label class="container">
-              <input type="checkbox" name="correctAnswer" />
-              <span class="checkmark"></span>
-            </label>
-          </div>
-          <div class="option">
-            <input name="option" type="text" placeholder="Type an answer option here..." />
-            <label class="container">
-              <input type="checkbox" name="correctAnswer" />
-              <span class="checkmark"></span>
-            </label>
-          </div>
-        </div>
+      <div class="questionSelect" id="questionSelect">
       </div>
+      <div class="valueEditor">
+        <button class="navigation" onclick="changeQuestion(-1)">‹</button>
 
-      <button class="navigation" onclick="changeQuestion(1)">›</button>
+        <div class="content">
+          <div class="question">
+            <input id="contentUpload" type="file" accept="image/*" />
+            <div id="questionContent" class="questionContent">
+                            <ion-icon name="add-circle-outline"></ion-icon>
+              <p>
+                Add a picture here!
+              </p>
+            </div>
+            <input
+              id="question"
+              type="text"
+              placeholder="Type the question here..."
+            />
+          </div>
+
+          <div class="options">
+            <div class="option">
+              <input
+                name="option"
+                type="text"
+                placeholder="Type an answer option here..."
+              />
+              <label class="container">
+                <input type="checkbox" name="correctAnswer" />
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="option">
+              <input
+                name="option"
+                type="text"
+                placeholder="Type an answer option here..."
+              />
+              <label class="container">
+                <input type="checkbox" name="correctAnswer" />
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="option">
+              <input
+                name="option"
+                type="text"
+                placeholder="Type an answer option here..."
+              />
+              <label class="container">
+                <input type="checkbox" name="correctAnswer" />
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="option">
+              <input
+                name="option"
+                type="text"
+                placeholder="Type an answer option here..."
+              />
+              <label class="container">
+                <input type="checkbox" name="correctAnswer" />
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <button class="navigation" onclick="changeQuestion(1)">›</button>
+      </div>
     </div>
   </body>
 </html>
