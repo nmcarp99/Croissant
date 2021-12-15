@@ -1,33 +1,90 @@
-html, body { height: 90%; padding: 0; margin: 0; }
-button{
-    width: 50%; height: 50%; float: left;
-}
-#answer1{
-    background-color: #4CAF50;
-}
-#answer2{
-    background-color: #f94a1e;
-}
-#answer3{
-    background-color: #3399ff;
-}
-#answer4{
-    background-color: #ff9933;
+body {
+  margin: 0;
+  background: radial-gradient(circle at 0% 0%, #373b52, #252736 51%, #1d1e26);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Raleway', sans-serif;
 }
 
-#buttons{
-    text-align: center;
+.header {
+  width: 100%;
+  background: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-#nameText{
-    font-family: 'Raleway', sans-serif;
-    padding: 0px 10px;
+
+.header p {
+  margin: 20px;
 }
-#scoreText{
-    font-family: 'Raleway', sans-serif;
-    padding: 0px 10px;
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  flex-grow: 1;
 }
-#message{
-    font-family: 'Raleway', sans-serif;
-    text-align: center;
-    font-size: 35px;
+
+.question {
+  background: rgba(255, 255, 255, 0.4);
+  width: 100%;
+  height: 30vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.question h1 {
+  color: white;
+  font-size: 4em;
+  margin-left: 10vh;
+}
+
+#questionImage {
+  height: 20vh;
+  width: 20vh;
+  margin-right: 10vh;
+}
+
+.answers {
+  display: flex;
+  flex-wrap: wrap;
+  width: calc(100%);
+  padding: 10px 0;
+  flex-grow: 1;
+}
+
+.answer {
+  width: calc(50% - 15px);
+  flex-grow: 1;
+  border: white 3px solid;
+  color: white;
+  font-size: 2.5em;
+  margin: 5px;
+}
+
+.answer:hover {
+  filter: brightness(90%);
+}
+
+.answer:active {
+  filter: brightness(80%);
+}
+
+.answer:nth-of-type(1) {
+  background: #4CAF50;
+}
+.answer:nth-of-type(2) {
+  background: #f94a1e;
+}
+.answer:nth-of-type(3) {
+  background: #3399ff;
+}
+.answer:nth-of-type(4) {
+  background: #ff9933;
 }

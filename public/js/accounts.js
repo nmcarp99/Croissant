@@ -1,9 +1,20 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
 
-import { getDatabase, onValue, get, set, ref } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
+import {
+  getDatabase,
+  onValue,
+  get,
+  set,
+  ref
+} from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
 
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -24,55 +35,62 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const auth = getAuth();
 
-window.addEventListener("load", () => {
-  if ($("#signUpForm").length) {
-    $("#signUpForm").submit(() => {
-      let email = $("#email").val();
-      let password = $("#password").val();
-      let username = $("#username").val();
+window.signUp = () => {
+  let email = $("#email").val();
+  let password = $("#password").val();
+  let username = $("#username").val();
 
-      createUserWithEmailAndPassword(auth, email, password)
-        .then(userCredential => {
-          const user = userCredential.user;
+  createUserWithEmailAndPassword(auth, email, password)
+    .then(userCredential => {
+      const user = userCredential.user;
 
-          set(ref(database, 'users/' + user.uid), {
-            username: username,
-            email: email
-          });
+      set(ref(database, "users/" + user.uid), {
+        username: username,
+        email: email
+      });
 
-          location.href = "/login";
-        })
-        .catch(error => {
-          alert(error.code + ": " + error.message);
-        });
-
-      return false; // do not reload the page
+      location.href = "/login";
+    })
+    .catch(error => {
+      alert(error.code + ": " + error.message);
     });
-  } else if ($("#logInForm").length) {
-    $("#logInForm").submit(() => {
-      let email = $("#email").val();
-      let password = $("#password").val();
 
-      signInWithEmailAndPassword(auth, email, password)
-        .then(userCredential => {
+  return false; // do not reload the page
+};
 
-          const user = userCredential.user;
-          const usernameRef = ref(database, '/users/' + user.uid + '/username');
+window.logIn = () => {
+  let email = $("#email").val();
+  let password = $("#password").val();
 
-          get(usernameRef).then(snap => {
-            localStorage.setItem("username", snap.val());
-          });
+  signInWithEmailAndPassword(auth, email, password)
+    .then(userCredential => {
+      const user = userCredential.user;
+      const usernameRef = ref(database, "/users/" + user.uid + "/username");
 
-          localStorage.setItem("user", userCredential.user.uid);
-          localStorage.setItem("email", email);
+      get(usernameRef).then(snap => {
+        localStorage.setItem("username", snap.val());
+      });
 
-          location.href = "/";
-        })
-        .catch(error => {
-          alert(error.code + ": " + error.message);
-        });
+      localStorage.setItem("user", userCredential.user.uid);
+      localStorage.setItem("email", email);
 
-      return false; // do not reload the page;
+      location.href = "/";
+    })
+    .catch(error => {
+      alert(error.code + ": " + error.message);
     });
-  }
-});
+
+  return false; // do not reload the page;
+};
+
+window.signOut = () => {
+  signOut(auth).then(() => {
+    location.reload();
+  });
+};
+
+window.auth = auth;
+
+window.onStateChange;
+
+auth.onAuthStateChanged(window.onStateChange);

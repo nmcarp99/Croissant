@@ -26,30 +26,17 @@ body {
     color: white;
     font-family: 'Tajawal', sans-serif;
     font-size: 50px;
-    margin-top: 0;
+    margin-top: 10px;
     animation: flashing 0.5s linear infinite;
-}
-#players{
-    text-align: center;
-    font-size: 20px;
-    resize: none;
-    background-color: rgba(57, 63, 84, 0.8);
-    border: 3px solid;
-    border-image: linear-gradient(var(--angle), #B294FF, #57E6E6, #FEFFB8, #57E6E6, #B294FF, #57E6E6) 1;
-    animation: 10s rotate linear infinite;
-    padding: 30px;
-    flex-grow: 1;
-    width: 75vw;
-    display: flex;
-    justify-content: center;
-    align-content: flex-start;
-    flex-wrap: wrap;
-    margin: 30px;
 }
 #players h1{
   margin: 10px 70px;
   color: white;
   font-size: 30px;
+  cursor: pointer;
+}
+#players h1:hover{
+  text-decoration: line-through;
 }
 @keyframes rotate {
   to {
@@ -58,7 +45,7 @@ body {
 }
 
 button{
-    background-color: #3A3B3A;
+    background-color: #7881A1;
     border: none;
     color: white;
     padding: 15px 50px;
@@ -111,5 +98,86 @@ button.player {
   }
   100% {
     opacity: 1;
+  }
+}
+
+
+
+@property --rotate {
+  syntax: "<angle>";
+  initial-value: 132deg;
+  inherits: false;
+}
+
+:root {
+  --card-height: 65vh;
+  --card-width: calc(var(--card-height) / 1.5);
+}
+
+.card {
+  background: #191c29;
+
+  position: relative;
+  border-radius: 6px;
+
+  color: rgb(88 199 250 / 0%);
+  cursor: pointer;
+  font-family: cursive;
+  text-align: center;
+  font-size: 20px;
+  resize: none;
+  padding: 30px;
+  flex-grow: 1;
+  width: 75vw;
+  display: flex;
+  justify-content: center;
+  align-content: flex-start;
+  flex-wrap: wrap;
+  margin: 30px;
+}
+
+.card::before {
+  content: "";
+  width: 101.5%;
+  height: 102%;
+  border-radius: 8px;
+  background-image: linear-gradient(
+    var(--rotate)
+    , #B294FF, #57E6E6, #FEFFB8, #57E6E6, #B294FF, #57E6E6);
+    position: absolute;
+    z-index: -1;
+    top: -1%;
+    left: -.7%;
+    animation: spin 2.5s linear infinite;
+}
+
+.card::after {
+  position: absolute;
+  content: "";
+  top: calc(var(--card-height) / 6);
+  left: -150px;
+  right: 0;
+  top: -50px;
+  z-index: -1;
+  height: 115%;
+  width: 120%;
+  margin: 0 auto;
+  transform: scale(0.8);
+  filter: blur(calc(var(--card-height) / 6));
+  background-image: linear-gradient(
+    var(--rotate)
+    , #B294FF, #57E6E6, #FEFFB8, #57E6E6, #B294FF, #57E6E6);
+    opacity: 1;
+  background-size: 150%;
+  transition: opacity .5s;
+  animation: spin 2.5s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    --rotate: 0deg;
+  }
+  100% {
+    --rotate: 360deg;
   }
 }
