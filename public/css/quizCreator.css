@@ -262,6 +262,26 @@ input[type="file"] {
   width: 100%;
 }
 
+.closeButton {
+  border: none;
+  background: transparent;
+  color: white;
+  margin-right: 20px;
+  cursor: pointer;
+  transition: color .2s ease;
+}
+
+.closeButton:hover {
+  color: red;
+}
+
+.questionSelectHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);

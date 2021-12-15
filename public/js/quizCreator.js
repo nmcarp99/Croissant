@@ -1,5 +1,7 @@
-const changesSavedMessage = "All changes saved to database.";
-const savingMessage = "Saving...";
+const changesSavedMessage = `<ion-icon name="cloud-done-outline"></ion-icon> All changes saved to database.`;
+const savingMessage = `<ion-icon name="cloud-upload-outline"></ion-icon> Saving...`;
+const offlineMessage = `<ion-icon name="cloud-offline-outline"></ion-icon> You are offline...`;
+const onlineMessage = `<ion-icon name="cloud-done-outline"></ion-icon> You are online.`;
 
 var socket = io();
 var questionNum = 0; //Starts at two because question 1 is already present
@@ -8,12 +10,20 @@ var signedIn = false;
 var params;
 var quiz;
 var currentQuestion = 0;
-var timeouts = {};
+var keyboardTimeout;
 
 socket.on("connect", () => {
   socketConnected = true;
 
-  loadQuiz();
+  $("#saveState").html(onlineMessage);
+
+  if (!quiz) {
+    loadQuiz();
+  }
+});
+
+socket.on("disconnect", () => {
+  $("#saveState").html(offlineMessage);
 });
 
 socket.on("returnQuiz", newQuiz => {
@@ -48,6 +58,22 @@ onStateChange = user => {
   loadQuiz();
 };
 
+function deleteQuestion(i) {
+  if (quiz.questions.length == 1) {
+    return;
+  }
+
+  if (currentQuestion == quiz.questions.length - 1) {
+    currentQuestion--;
+  }
+
+  quiz.questions.splice(i, 1);
+
+  changeQuestion(0);
+
+  updateQuiz();
+}
+
 function newQuestion() {
   quiz.questions.push({
     question: "",
@@ -58,8 +84,6 @@ function newQuestion() {
 
   loadQuestion(quiz.questions.length - 1);
 
-  reloadQuestionSelect();
-  
   updateQuiz();
 }
 
@@ -69,7 +93,9 @@ function reloadQuestionSelect() {
   quiz.questions.forEach((question, i) => {
     $("#questionSelect").append(`
       <div class="question" id="questionSelect${i}" onclick="loadQuestion(${i})">
-        <h1>${question.question}</h1>
+        <div class="questionSelectHead"><h1>${
+          question.question
+        }</h1><button class="closeButton" id="closeButton${i}">✕</button></div>
         <div class="answers">
           <p>${question.answers[0] +
             (question.correct.includes("1") ? " ✓" : "")}</p>
@@ -82,6 +108,12 @@ function reloadQuestionSelect() {
         </div>
       </div>
     `);
+
+    document.getElementById("closeButton" + i).addEventListener("click", e => {
+      e.stopPropagation();
+
+      deleteQuestion(i);
+    });
   });
 
   $("#questionSelect").append(`
@@ -93,7 +125,7 @@ function reloadQuestionSelect() {
 
 function loadImage(data) {
   if (data != "") {
-  $("#questionContent").html(`
+    $("#questionContent").html(`
     <img class="questionImage" src="${data}" />
   `);
   } else {
@@ -328,11 +360,10 @@ $(() => {
   inputs.forEach(input => {
     if (input.type == "text") {
       input.addEventListener("keydown", e => {
-        var self = e.path[0];
 
-        clearTimeout(timeouts[self]);
+        clearTimeout(keyboardTimeout);
 
-        timeouts[self] = setTimeout(() => {
+        keyboardTimeout = setTimeout(() => {
           updateQuiz();
         }, 250);
       });

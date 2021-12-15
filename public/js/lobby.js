@@ -8,11 +8,8 @@ socket.on('connect', function() {
     //Tell server that it is player connection
     socket.emit('player-join', params); // it is now redirecting me to the home page.
 });
-
-//Boot player back to join screen if game pin has no match
 socket.on('noGameFound', function(){
     window.location.href = '/';
-    // this is being called. yea look at my cursor for a sec
 });
 socket.on('nameExists', () => {
   location.href = '/?alert=nameExists';

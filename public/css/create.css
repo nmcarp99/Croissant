@@ -116,3 +116,6 @@ button {
 .gameButtonIcons ion-icon[name="create-outline"]:hover {
   color: orange;
 }
+.gameButtonIcons ion-icon[name="arrow-redo-outline"]:hover {
+  color: lime;
+}

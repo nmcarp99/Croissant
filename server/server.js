@@ -35,6 +35,56 @@ function doesGameExist(game_code) {
   return this.games.filter(game => game.pin == game_code)[0];
 }
 
+function sendQuestion(game, playerData) {
+  if (game.quiz.questions.length >= game.gameData.question) {
+    var questionNum = game.gameData.question;
+    questionNum = questionNum - 1;
+    var question = game.quiz.questions[questionNum].question;
+    var answers = game.quiz.questions[questionNum].answers;
+    var correctAnswer = game.quiz.questions[questionNum].correct;
+
+    io.to(game.pin).emit("gameQuestions", {
+      question: question,
+      answers: answers,
+      playersInGame: playerData.length
+    });
+  } else {
+    var playersInGame = players.getPlayers(game.hostId);
+    var first = { name: "", score: 0 };
+    var second = { name: "", score: 0 };
+    var third = { name: "", score: 0 };
+    var fourth = { name: "", score: 0 };
+    var fifth = { name: "", score: 0 };
+
+    playersInGame.sort((a, b) => {
+      if (a.gameData.score > b.gamedata.score) {
+        return -1;
+      }
+      return 1;
+    });
+
+    first.name = playersInGame[0] ? playersInGame[0].name : "";
+    second.name = playersInGame[1] ? playersInGame[1].name : "";
+    third.name = playersInGame[2] ? playersInGame[2].name : "";
+    fourth.name = playersInGame[3] ? playersInGame[3].name : "";
+    fifth.name = playersInGame[4] ? playersInGame[4].name : "";
+
+    first.score = playersInGame[0] ? playersInGame[0].gameData.score : 0;
+    second.score = playersInGame[1] ? playersInGame[1].gameData.score : 0;
+    third.score = playersInGame[2] ? playersInGame[2].gameData.score : 0;
+    fourth.score = playersInGame[3] ? playersInGame[3].gameData.score : 0;
+    fifth.score = playersInGame[4] ? playersInGame[4].gameData.score : 0;
+
+    io.to(game.pin).emit("GameOver", {
+      num1: first.name,
+      num2: second.name,
+      num3: third.name,
+      num4: fourth.name,
+      num5: fifth.name
+    });
+  }
+}
+
 app.use(express.static(publicPath));
 
 app.get("/*", (req, res) => {
@@ -51,6 +101,27 @@ server.listen(port, () => {
 
 //When a connection to server is made from client
 io.on("connection", socket => {
+  socket.on("getGameQuestion", () => {
+    var player = players.getPlayer(socket.id);
+
+    if (!player) {
+      console.log("Could not find player in getGameQuestion...");
+      return;
+    }
+
+    var game = games.getGame(player.hostId);
+
+    if (!game) {
+      console.log("Could not get game in getGameQuestion");
+      return;
+    }
+
+    socket.emit(
+      "returnGameQuestion",
+      game.quiz.questions[game.gameData.question - 1]
+    );
+  });
+
   socket.on("isValidCode", code => {
     var game = games.getGameByPin(parseInt(code));
 
@@ -79,14 +150,14 @@ io.on("connection", socket => {
         if (result[0] !== undefined) {
           var gamePin = Math.floor(Math.random() * 90000) + 10000; //new pin for game
 
-          games.addGame(gamePin, socket.id, false, {
+          var game = games.addGame(gamePin, socket.id, false, {
             playersAnswered: 0,
             questionLive: false,
             gameid: data.id,
             question: 1
           }); //Creates a game with pin and host id
 
-          var game = games.getGame(socket.id); //Gets the game data
+          game.quiz = result[0];
 
           socket.join(parseInt(game.pin)); //The host is joining a room based on the pin
 
@@ -145,39 +216,14 @@ io.on("connection", socket => {
           players.players[i].hostId = socket.id;
         }
       }
-      var gameid = game.gameData["gameid"];
-
-      var dbo = client.db("kahootDB");
-      var query = { id: parseInt(gameid) };
-      dbo
-        .collection("kahootGames")
-        .find(query)
-        .toArray(function(err, res) {
-          if (err) throw err;
-
-          var question = res[0].questions[0].question;
-          var answer1 = res[0].questions[0].answers[0];
-          var answer2 = res[0].questions[0].answers[1];
-          var answer3 = res[0].questions[0].answers[2];
-          var answer4 = res[0].questions[0].answers[3];
-          var correctAnswer = res[0].questions[0].correct;
-
-          socket.emit("gameQuestions", {
-            q1: question,
-            a1: answer1,
-            a2: answer2,
-            a3: answer3,
-            a4: answer4,
-            correct: correctAnswer,
-            playersInGame: playerData.length
-          });
-        });
 
       players.players.forEach(player => {
         if (player.hostId == socket.id) {
           player.joining = true;
         }
       });
+
+      sendQuestion(game, playerData);
 
       io.to(game.pin).emit("gameStartedPlayer");
       game.gameData.questionLive = true;
@@ -241,11 +287,18 @@ io.on("connection", socket => {
       var game = games.getGame(player.hostId);
       socket.join(parseInt(game.pin));
       player.playerId = socket.id;
+      
+      var question = game.quiz.questions[game.gameData.question - 1];
+      var playersInGame = players.getPlayers(game.hostId).length; //Getting all players in game
 
-      var playerData = players.getPlayers(game.hostId);
-      socket.emit("playerGameData", playerData);
+      socket.emit("updatePlayerData", player);
+      socket.emit("gameQuestions", {
+        question: question.question,
+        answers: question.answers,
+        playersInGame: playersInGame
+      });
     } else {
-      console.log("hmmmmm");
+      console.log("player tried to join nonexistant game...");
       socket.emit("noGameFound"); //No player found
     }
   });
@@ -315,39 +368,30 @@ io.on("connection", socket => {
 
       var gameQuestion = game.gameData.question;
       var gameid = game.gameData.gameid;
+      var correctAnswer = game.quiz.questions[gameQuestion - 1].correct;
+      //Checks player answer with correct answer
+      if (num == correctAnswer) {
+        player.gameData.score += 100;
+        io.to(game.pin).emit("getTime", socket.id);
+        socket.emit("answerResult", true);
+      }
 
-      var dbo = client.db("kahootDB");
-      var query = { id: parseInt(gameid) };
-      dbo
-        .collection("kahootGames")
-        .find(query)
-        .toArray(function(err, res) {
-          if (err) throw err;
-          var correctAnswer = res[0].questions[gameQuestion - 1].correct;
-          //Checks player answer with correct answer
-          if (num == correctAnswer) {
-            player.gameData.score += 100;
-            io.to(game.pin).emit("getTime", socket.id);
-            socket.emit("answerResult", true);
-          }
-
-          //Checks if all players answered
-          if (game.gameData.playersAnswered == playerNum.length) {
-            game.gameData.questionLive = false; //Question has been ended bc players all answered under time
-            var playerData = players.getPlayers(game.hostId);
-            io.to(game.pin).emit("questionOver", playerData, correctAnswer); //Tell everyone that question is over
-          } else {
-            //update host screen of num players answered
-            io.to(game.pin).emit("updatePlayersAnswered", {
-              playersInGame: playerNum.length,
-              playersAnswered: game.gameData.playersAnswered
-            });
-          }
+      //Checks if all players answered
+      if (game.gameData.playersAnswered == playerNum.length) {
+        game.gameData.questionLive = false; //Question has been ended bc players all answered under time
+        var playerData = players.getPlayers(game.hostId);
+        io.to(game.pin).emit("questionOver", playerData, correctAnswer); //Tell everyone that question is over
+      } else {
+        //update host screen of num players answered
+        io.to(game.pin).emit("updatePlayersAnswered", {
+          playersInGame: playerNum.length,
+          playersAnswered: game.gameData.playersAnswered
         });
+      }
     }
   });
 
-  socket.on("getScore", function() {
+  socket.on("getScore", () => {
     var player = players.getPlayer(socket.id);
     socket.emit("newScore", player.gameData.score);
   });
@@ -393,77 +437,18 @@ io.on("connection", socket => {
     game.gameData.playersAnswered = 0;
     game.gameData.questionLive = true;
     game.gameData.question += 1;
-    var gameid = game.gameData.gameid;
 
-    var dbo = client.db("kahootDB");
-    var query = { id: parseInt(gameid) };
-    dbo
-      .collection("kahootGames")
-      .find(query)
-      .toArray(function(err, res) {
-        if (err) throw err;
-
-        if (res[0].questions.length >= game.gameData.question) {
-          var questionNum = game.gameData.question;
-          questionNum = questionNum - 1;
-          var question = res[0].questions[questionNum].question;
-          var answer1 = res[0].questions[questionNum].answers[0];
-          var answer2 = res[0].questions[questionNum].answers[1];
-          var answer3 = res[0].questions[questionNum].answers[2];
-          var answer4 = res[0].questions[questionNum].answers[3];
-          var correctAnswer = res[0].questions[questionNum].correct;
-
-          socket.emit("gameQuestions", {
-            q1: question,
-            a1: answer1,
-            a2: answer2,
-            a3: answer3,
-            a4: answer4,
-            correct: correctAnswer,
-            playersInGame: playerData.length
-          });
-        } else {
-          var playersInGame = players.getPlayers(game.hostId);
-          var first = { name: "", score: 0 };
-          var second = { name: "", score: 0 };
-          var third = { name: "", score: 0 };
-          var fourth = { name: "", score: 0 };
-          var fifth = { name: "", score: 0 };
-
-          playersInGame.sort((a, b) => {
-            if (a.gameData.score > b.gamedata.score) {
-              return -1;
-            }
-            return 1;
-          });
-
-          first.name = playersInGame[0] ? playersInGame[0].name : "";
-          second.name = playersInGame[1] ? playersInGame[1].name : "";
-          third.name = playersInGame[2] ? playersInGame[2].name : "";
-          fourth.name = playersInGame[3] ? playersInGame[3].name : "";
-          fifth.name = playersInGame[4] ? playersInGame[4].name : "";
-
-          first.score = playersInGame[0] ? playersInGame[0].gameData.score : 0;
-          second.score = playersInGame[1] ? playersInGame[1].gameData.score : 0;
-          third.score = playersInGame[2] ? playersInGame[2].gameData.score : 0;
-          fourth.score = playersInGame[3] ? playersInGame[3].gameData.score : 0;
-          fifth.score = playersInGame[4] ? playersInGame[4].gameData.score : 0;
-
-          io.to(game.pin).emit("GameOver", {
-            num1: first.name,
-            num2: second.name,
-            num3: third.name,
-            num4: fourth.name,
-            num5: fifth.name
-          });
-        }
-      });
-
-    io.to(game.pin).emit("nextQuestionPlayer");
+    sendQuestion(game, playerData);
   });
 
-  socket.on("openShop", function() {
+  socket.on("openShop", () => {
     var game = games.getGame(socket.id);
+
+    if (!game) {
+      console.log("Player tried to open shop... Declined.");
+      return;
+    }
+
     io.to(game.pin).emit("openShopPlayer");
   });
 
@@ -568,7 +553,7 @@ io.on("connection", socket => {
         $set: data.quiz
       }
     );
-    
+
     socket.emit("quizUpdated");
   });
 });

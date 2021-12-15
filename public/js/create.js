@@ -24,6 +24,7 @@ socket.on("gameNamesData", function(data) {
       <div onclick="location.href='/host/?id=${data[i].id}'" class="gameButton">
         <a href="/host/?id=${data[i].id}">${data[i].name}</a>
         <div class="gameButtonIcons">
+          <ion-icon name="arrow-redo-outline" onclick="alert('operation not supported yet...')"></ion-icon>
           <ion-icon name="create-outline" onclick="location.href='/create/quiz-creator/?id=${data[i].id}'"></ion-icon>
           <ion-icon name="trash-outline" onclick="deleteQuiz(${data[i].id})"></ion-icon>
         </div>
@@ -37,6 +38,7 @@ socket.on("gameNamesData", function(data) {
   
   var iconButtons = Array.from(document.getElementsByName("create-outline"));
   iconButtons = iconButtons.concat(Array.from(document.getElementsByName("trash-outline")));
+  iconButtons = iconButtons.concat(Array.from(document.getElementsByName("arrow-redo-outline")));
   
   iconButtons.forEach(button => {
     button.addEventListener("click", e => {
