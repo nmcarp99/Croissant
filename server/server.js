@@ -48,7 +48,7 @@ function sendQuestion(game, playerData) {
       answers: answers,
       image: game.quiz.questions[questionNum].image,
       playersInGame: playerData.length,
-      multipleChoice: (game.quiz.questions[questionNum].correct.length != 1)
+      multipleChoice: game.quiz.questions[questionNum].correct.length != 1
     });
   } else {
     var playersInGame = players.getPlayers(game.hostId);
@@ -289,9 +289,9 @@ io.on("connection", socket => {
       var game = games.getGame(player.hostId);
       socket.join(parseInt(game.pin));
       player.playerId = socket.id;
-      
+
       var playersInGame = players.getPlayers(game.hostId); //Getting all players in game
-      
+
       sendQuestion(game, playersInGame);
     } else {
       console.log("player tried to join nonexistant game...");
@@ -352,7 +352,7 @@ io.on("connection", socket => {
   });
 
   //Sets data in player class to answer from player
-  socket.on("playerAnswer", num => {
+  socket.on("playerAnswer", playerAnswers => {
     // >>> CHECK IF PLAYER HAS ALREADY ANSWERED
 
     var player = players.getPlayer(socket.id);
@@ -373,23 +373,33 @@ io.on("connection", socket => {
 
     if (game.gameData.questionLive == true) {
       //if the question is still live
-      player.gameData.answer = num;
+      player.gameData.answer = playerAnswers;
       game.gameData.playersAnswered += 1;
 
       var gameQuestion = game.gameData.question;
       var gameid = game.gameData.gameid;
-      var correctAnswer = game.quiz.questions[gameQuestion - 1].correct;
+      var correctAnswers = game.quiz.questions[gameQuestion - 1].correct;
+
       //Checks player answer with correct answer
-      if (num == correctAnswer) {
-        player.gameData.score += 100;
+
+      var numCorrect = 0;
+
+      playerAnswers.forEach(answer => {
+        if (correctAnswers.includes(answer.toString())) {
+          numCorrect++;
+        }
+      });
+
+      if (numCorrect != 0) {
         io.to(game.pin).emit("getTime", socket.id);
+        player.gameData.score += 100 * numCorrect;
       }
 
       //Checks if all players answered
       if (game.gameData.playersAnswered == playerNum.length) {
         game.gameData.questionLive = false; //Question has been ended bc players all answered under time
         var playerData = players.getPlayers(game.hostId);
-        io.to(game.pin).emit("questionOver", playerData, correctAnswer); //Tell everyone that question is over
+        io.to(game.pin).emit("questionOver", playerData, correctAnswers); //Tell everyone that question is over
       } else {
         //update host screen of num players answered
         io.to(game.pin).emit("updatePlayersAnswered", {

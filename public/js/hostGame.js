@@ -12,8 +12,8 @@ socket.on("connect", function() {
   socket.emit("host-join-game", params);
 });
 
-socket.on("noGameFound", function() {
-  window.location.href = "../../"; //Redirect user to 'join game' page
+socket.on("noGameFound", () => {
+  window.location.href = "/"; //Redirect user to 'join game' page
 });
 
 socket.on("gameQuestions", function(data) {
@@ -34,7 +34,9 @@ socket.on("updatePlayersAnswered", function(data) {
 });
 
 socket.on("questionOver", function(playerData, correct) {
+  // end the timer
   clearInterval(timer);
+  
   var answer1 = 0;
   var answer2 = 0;
   var answer3 = 0;
@@ -163,10 +165,12 @@ function nextQuestion() {
 
 function updateTimer() {
   time = 20;
-  timer = setInterval(function() {
+  clearInterval(timer);
+  timer = setInterval(() => {
     time -= 1;
-    document.getElementById("num").textContent = " " + time;
+    $("#num").html(time);
     if (time == 0) {
+      clearInterval(timer);
       socket.emit("timeUp");
     }
   }, 1000);

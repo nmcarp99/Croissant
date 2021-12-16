@@ -1,13 +1,31 @@
 var socket = io();
-var playerAnswered = false;
+var playerAnswered = true;
 var correct = false;
 var name;
 var score = 0;
-var selectedAnswers;
+var selectedAnswers = [];
 var isMultipleChoice = false;
 
 // get params from url
 var params = $.deparam(location.search);
+
+function submitAnswer() {
+  playerAnswered = true;
+
+  socket.emit("playerAnswer", selectedAnswers);
+}
+
+function selectAnswer(answer, i) {
+  if (selectedAnswers.includes(i + 1)) {
+    selectedAnswers.splice(selectedAnswers.indexOf(i + 1), 1);
+    answer.getElementsByTagName("input")[0].checked = false;
+  } else {
+    selectedAnswers.push(i + 1);
+    answer.getElementsByTagName("input")[0].checked = true;
+  }
+
+  console.log(selectedAnswers);
+}
 
 function clearMessages() {
   Array.from(document.getElementsByClassName("message")).forEach(message => {
@@ -38,7 +56,7 @@ socket.on("questionOver", (playerData, correctAnswers) => {
 
   let numCorrect = 0;
 
-  if (selectedAnswers) {
+  if (selectedAnswers != []) {
     selectedAnswers.forEach(answer => {
       if (correctAnswers.includes(answer.toString())) {
         numCorrect++;
@@ -46,7 +64,7 @@ socket.on("questionOver", (playerData, correctAnswers) => {
     });
   }
 
-  if (numCorrect == 0) {
+  if (numCorrect == 0 || !playerAnswered) {
     $(".incorrect").css("display", "flex");
   } else if (numCorrect != correctAnswers.length) {
     $(".partialCorrect").css("display", "flex");
@@ -54,11 +72,9 @@ socket.on("questionOver", (playerData, correctAnswers) => {
     $(".correct").css("display", "flex");
   }
 
-  selectedAnswers = undefined;
+  selectedAnswers = [];
 
   socket.emit("getScore");
-
-  playerAnswered = false;
 });
 
 socket.on("newScore", score => {
@@ -66,6 +82,8 @@ socket.on("newScore", score => {
 });
 
 socket.on("gameQuestions", question => {
+  playerAnswered = false;
+
   if (question.multipleChoice) {
     $(".submitMultipleChoice").show();
   } else {
@@ -81,7 +99,22 @@ socket.on("gameQuestions", question => {
 
   Array.from(document.getElementsByClassName("answer")).forEach((answer, i) => {
     if (question.answers[i] != "") {
-      answer.innerHTML = question.answers[i];
+      answer.innerHTML =
+        question.answers[i] +
+        (isMultipleChoice
+          ? `
+        <label class="container">
+          <input type="checkbox" />
+          <span class="checkmark"></span>
+        </label>
+      `
+          : "");
+
+      if (isMultipleChoice) {
+        answer.getElementsByTagName("span")[0].addEventListener("click", e => {
+          e.stopPropagation();
+        });
+      }
       answer.style.display = "";
     } else {
       answer.style.display = "none";
@@ -106,8 +139,14 @@ socket.on("updatePlayerData", player => {
   console.log("update player data here...");
 });
 
-socket.on("GameOver", () => {
-  alert("gameover");
+socket.on("GameOver", winners => {
+  var winnerText = "";
+  
+  Object.values(winners).forEach(winner => {
+    winnerText += winner;
+  });
+  
+  alert(winnerText);
 });
 
 $(() => {
@@ -118,13 +157,11 @@ $(() => {
     answer.addEventListener("click", () => {
       if (playerAnswered == false) {
         if (isMultipleChoice) {
-          alert("selected" + i);
+          selectAnswer(answer, i);
         } else {
-          playerAnswered = true;
-
           selectedAnswers = [i + 1];
 
-          socket.emit("playerAnswer", i); //Sends player answer to server
+          submitAnswer();
 
           $(".submitted").css("display", "flex");
         }
