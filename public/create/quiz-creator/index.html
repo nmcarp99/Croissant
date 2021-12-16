@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <title>Edit | Croissant</title>
-    
+
     <link rel="stylesheet" href="/css/quizCreator.css" />
     <link rel="stylesheet" href="/css/checkboxes.css" />
     <link
@@ -41,6 +41,24 @@
     <script type="module" src="/js/accounts.js"></script>
 
     <script src="/js/quizCreator.js"></script>
+
+    <script type="text/javascript">
+      window.smartlook ||
+        (function(d) {
+          var o = (smartlook = function() {
+              o.api.push(arguments);
+            }),
+            h = d.getElementsByTagName("head")[0];
+          var c = d.createElement("script");
+          o.api = new Array();
+          c.async = true;
+          c.type = "text/javascript";
+          c.charset = "utf-8";
+          c.src = "https://rec.smartlook.com/recorder.js";
+          h.appendChild(c);
+        })(document);
+      smartlook("init", "a732e6a0bac6cec31a2c28cc07d41ea235a965a5");
+    </script>
   </head>
   <body>
     <div class="loading">
@@ -65,8 +83,7 @@
       </div>
     </div>
     <div class="editor">
-      <div class="questionSelect" id="questionSelect">
-      </div>
+      <div class="questionSelect" id="questionSelect"></div>
       <div class="valueEditor">
         <button class="navigation" onclick="changeQuestion(-1)">‹</button>
 
@@ -74,7 +91,7 @@
           <div class="question">
             <input id="contentUpload" type="file" accept="image/*" />
             <div id="questionContent" class="questionContent">
-                            <ion-icon name="add-circle-outline"></ion-icon>
+              <ion-icon name="add-circle-outline"></ion-icon>
               <p>
                 Add a picture here!
               </p>

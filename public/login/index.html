@@ -43,8 +43,26 @@
     <script src="/js/libs/deparam.js"></script>
 
     <script src="/js/accounts.js" type="module"></script>
-    
+
     <script src="/js/login.js"></script>
+
+    <script type="text/javascript">
+      window.smartlook ||
+        (function(d) {
+          var o = (smartlook = function() {
+              o.api.push(arguments);
+            }),
+            h = d.getElementsByTagName("head")[0];
+          var c = d.createElement("script");
+          o.api = new Array();
+          c.async = true;
+          c.type = "text/javascript";
+          c.charset = "utf-8";
+          c.src = "https://rec.smartlook.com/recorder.js";
+          h.appendChild(c);
+        })(document);
+      smartlook("init", "a732e6a0bac6cec31a2c28cc07d41ea235a965a5");
+    </script>
   </head>
   <body>
     <div class="wrapper">

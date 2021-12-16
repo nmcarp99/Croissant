@@ -3,11 +3,19 @@ var playerAnswered = false;
 var correct = false;
 var name;
 var score = 0;
+var selectedAnswers;
+var isMultipleChoice = false;
 
 // get params from url
 var params = $.deparam(location.search);
 
-socket.on("connect", function() {
+function clearMessages() {
+  Array.from(document.getElementsByClassName("message")).forEach(message => {
+    message.style.display = "none";
+  });
+}
+
+socket.on("connect", () => {
   //Tell server that it is host connection from game view
   socket.emit("player-join-game", params);
 });
@@ -17,43 +25,57 @@ socket.on("openShopPlayer", () => {
   console.log($("#shop"));
 });
 
-socket.on("noGameFound", function() {
-  window.location.href = "../../"; //Redirect user to 'join game' page
+socket.on("noGameFound", () => {
+  window.location.href = "/"; //Redirect user to 'join game' page
   var alertList = document.querySelectorAll(".alert");
   var alerts = [].slice.call(alertList).map(function(element) {
     return new bootstrap.Alert(element);
   });
 });
 
-//Get results on last question
-socket.on("answerResult", function(data) {
-  if (data == true) {
-    correct = true;
-  }
-});
+socket.on("questionOver", (playerData, correctAnswers) => {
+  $(".submitted").hide();
 
-socket.on("questionOver", function(data) {
-  if (correct == true) {
-    document.body.style.backgroundColor = "#4CAF50";
-    document.getElementById("message").style.display = "block";
-    document.getElementById("message").innerHTML = "Correct!";
+  let numCorrect = 0;
+
+  if (selectedAnswers) {
+    selectedAnswers.forEach(answer => {
+      if (correctAnswers.includes(answer.toString())) {
+        numCorrect++;
+      }
+    });
+  }
+
+  if (numCorrect == 0) {
+    $(".incorrect").css("display", "flex");
+  } else if (numCorrect != correctAnswers.length) {
+    $(".partialCorrect").css("display", "flex");
   } else {
-    document.body.style.backgroundColor = "#f94a1e";
-    document.getElementById("message").style.display = "block";
-    document.getElementById("message").innerHTML = "Incorrect!";
+    $(".correct").css("display", "flex");
   }
-  document.getElementById("answer1").style.visibility = "hidden";
-  document.getElementById("answer2").style.visibility = "hidden";
-  document.getElementById("answer3").style.visibility = "hidden";
-  document.getElementById("answer4").style.visibility = "hidden";
+
+  selectedAnswers = undefined;
+
   socket.emit("getScore");
+
+  playerAnswered = false;
 });
 
-socket.on("newScore", function(data) {
-  document.getElementById("scoreText").innerHTML = "Score: " + data;
+socket.on("newScore", score => {
+  $("#score").html(score);
 });
 
 socket.on("gameQuestions", question => {
+  if (question.multipleChoice) {
+    $(".submitMultipleChoice").show();
+  } else {
+    $(".submitMultipleChoice").hide();
+  }
+
+  isMultipleChoice = question.multipleChoice;
+
+  clearMessages(); // hide all the messages
+
   $("#question").html(question.question);
   $("#questionImage").attr("src", question.image);
 
@@ -67,8 +89,8 @@ socket.on("gameQuestions", question => {
   });
 });
 
-socket.on("hostDisconnect", function() {
-  window.location.href = "../../";
+socket.on("hostDisconnect", () => {
+  window.location.href = "/";
 });
 
 socket.on("player-disconnect", data => {
@@ -84,25 +106,28 @@ socket.on("updatePlayerData", player => {
   console.log("update player data here...");
 });
 
-socket.on("GameOver", function() {
-  document.body.style.backgroundColor = "#FFFFFF";
-  document.getElementById("answer1").style.visibility = "hidden";
-  document.getElementById("answer2").style.visibility = "hidden";
-  document.getElementById("answer3").style.visibility = "hidden";
-  document.getElementById("answer4").style.visibility = "hidden";
-  document.getElementById("message").style.display = "block";
-  document.getElementById("message").innerHTML = "GAME OVER";
+socket.on("GameOver", () => {
+  alert("gameover");
 });
 
 $(() => {
   $("#shop").hide();
+  $(".message").hide();
 
   Array.from(document.getElementsByClassName("answer")).forEach((answer, i) => {
     answer.addEventListener("click", () => {
       if (playerAnswered == false) {
-        playerAnswered = true;
+        if (isMultipleChoice) {
+          alert("selected" + i);
+        } else {
+          playerAnswered = true;
 
-        socket.emit("playerAnswer", i); //Sends player answer to server
+          selectedAnswers = [i + 1];
+
+          socket.emit("playerAnswer", i); //Sends player answer to server
+
+          $(".submitted").css("display", "flex");
+        }
       }
     });
   });
