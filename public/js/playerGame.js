@@ -161,6 +161,8 @@ socket.on("GameOver", winners => {
 $(() => {
   $("#shop").hide();
   $(".message").hide();
+  
+  $("#username").html(`${params.name} | ${params.pin}`);
 
   Array.from(document.getElementsByClassName("answer")).forEach((answer, i) => {
     answer.addEventListener("click", () => {
