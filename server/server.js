@@ -59,7 +59,7 @@ function sendQuestion(game, playerData) {
     var fifth = { name: "", score: 0 };
 
     playersInGame.sort((a, b) => {
-      if (a.gameData.score > b.gamedata.score) {
+      if (a.gameData.score > b.gameData.score) {
         return -1;
       }
       return 1;
@@ -78,11 +78,11 @@ function sendQuestion(game, playerData) {
     fifth.score = playersInGame[4] ? playersInGame[4].gameData.score : 0;
 
     io.to(game.pin).emit("GameOver", {
-      num1: first.name,
-      num2: second.name,
-      num3: third.name,
-      num4: fourth.name,
-      num5: fifth.name
+      num1: first,
+      num2: second,
+      num3: third,
+      num4: fourth,
+      num5: fifth
     });
   }
 }
@@ -210,6 +210,7 @@ io.on("connection", socket => {
     var oldHostId = data.id;
     var game = games.getGame(oldHostId); //Gets game with old host id
     if (game) {
+      game.hostJoined = true;
       game.hostId = socket.id; //Changes the game host id to new host id
       socket.join(parseInt(game.pin));
       var playerData = players.getPlayers(oldHostId); //Gets player in game
@@ -305,7 +306,7 @@ io.on("connection", socket => {
     //If a game hosted by that id is found, the socket disconnected is a host
     if (game) {
       //Checking to see if host was disconnected or was sent to game view
-      if (game.gameLive == false) {
+      if (game.hostJoined == true || game.gameLive == false) {
         games.removeGame(socket.id); //Remove the game from games class
         console.log("Game ended with pin:", game.pin);
 

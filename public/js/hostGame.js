@@ -17,7 +17,7 @@ socket.on("noGameFound", () => {
 });
 
 socket.on("gameQuestions", function(data) {
-  document.getElementById("question").innerHTML = data.question;
+  document.getElementById("question").innerHTML = data.question + `<img src="${data.image}" style="height: 200px; width: 200px; overflow: hidden;">`;
   document.getElementById("answer1").innerHTML = data.answers[0];
   document.getElementById("answer2").innerHTML = data.answers[1];
   document.getElementById("answer3").innerHTML = data.answers[2];
@@ -197,11 +197,11 @@ socket.on("GameOver", function(data) {
   document.getElementById("winner5").style.display = "block";
   document.getElementById("winnerTitle").style.display = "block";
 
-  document.getElementById("winner1").innerHTML = "1. " + data.num1;
-  document.getElementById("winner2").innerHTML = "2. " + data.num2;
-  document.getElementById("winner3").innerHTML = "3. " + data.num3;
-  document.getElementById("winner4").innerHTML = "4. " + data.num4;
-  document.getElementById("winner5").innerHTML = "5. " + data.num5;
+  document.getElementById("winner1").innerHTML = "1. " + data.num1.name + ": " + data.num1.score;
+  document.getElementById("winner2").innerHTML = "2. " + data.num2.name + ": " + data.num2.score;
+  document.getElementById("winner3").innerHTML = "3. " + data.num3.name + ": " + data.num3.score;
+  document.getElementById("winner4").innerHTML = "4. " + data.num4.name + ": " + data.num4.score;
+  document.getElementById("winner5").innerHTML = "5. " + data.num5.name + ": " + data.num5.score;
 });
 
 socket.on("getTime", function(player) {

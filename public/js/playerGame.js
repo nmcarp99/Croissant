@@ -13,6 +13,8 @@ function submitAnswer() {
   playerAnswered = true;
 
   socket.emit("playerAnswer", selectedAnswers);
+
+  $(".submitted").css("display", "flex");
 }
 
 function selectAnswer(answer, i) {
@@ -23,8 +25,6 @@ function selectAnswer(answer, i) {
     selectedAnswers.push(i + 1);
     answer.getElementsByTagName("input")[0].checked = true;
   }
-
-  console.log(selectedAnswers);
 }
 
 function clearMessages() {
@@ -95,7 +95,13 @@ socket.on("gameQuestions", question => {
   clearMessages(); // hide all the messages
 
   $("#question").html(question.question);
-  $("#questionImage").attr("src", question.image);
+
+  if (question.image != "") {
+    $("#questionImage").attr("src", question.image);
+    $("#questionImage").show();
+  } else {
+    $("#questionImage").hide();
+  }
 
   Array.from(document.getElementsByClassName("answer")).forEach((answer, i) => {
     if (question.answers[i] != "") {
@@ -140,13 +146,16 @@ socket.on("updatePlayerData", player => {
 });
 
 socket.on("GameOver", winners => {
+  clearMessages();
+
   var winnerText = "";
-  
+
   Object.values(winners).forEach(winner => {
-    winnerText += winner;
+    winnerText += `<li>${winner.name}: ${winner.score}</li>`;
   });
-  
-  alert(winnerText);
+
+  $("#winners").html(winnerText);
+  $(".winners").css("display", "flex");
 });
 
 $(() => {
@@ -162,8 +171,6 @@ $(() => {
           selectedAnswers = [i + 1];
 
           submitAnswer();
-
-          $(".submitted").css("display", "flex");
         }
       }
     });

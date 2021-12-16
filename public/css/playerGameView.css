@@ -15,6 +15,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 70px;
 }
 
 .header p {
@@ -82,11 +83,13 @@ body {
   font-size: 2.5em;
 }
 
-.answer:hover, .submitMultipleChoice:hover {
+.answer:hover,
+.submitMultipleChoice:hover {
   filter: brightness(90%);
 }
 
-.answer:active, .submitMultipleChoice:active {
+.answer:active,
+.submitMultipleChoice:active {
   filter: brightness(80%);
 }
 
@@ -110,15 +113,19 @@ body {
   justify-content: center;
   align-items: center;
   position: fixed;
-  top: 0;
+  top: 70px;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - 70px);
   z-index: 100000000000;
 }
 
 .message h1 {
   font-size: 8em;
+}
+
+.message ol {
+  font-size: 3em;
 }
 
 .correct {
@@ -136,6 +143,19 @@ body {
 
 .partialCorrect {
   background: orange;
+}
+
+.winners {
+  background-image: radial-gradient(
+    circle at 0% 0%,
+    #373b52,
+    #252736 51%,
+    #1d1e26
+  );
+}
+
+.winners h1 {
+  margin-bottom: 0;
 }
 
 .checkmark {
