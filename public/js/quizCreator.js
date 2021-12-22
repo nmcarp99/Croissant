@@ -338,7 +338,7 @@ function loadQuestion(questionNum) {
 
 $(() => {
   params = $.deparam(location.search);
-
+  
   $("#questionContent").click(() => {
     $("#contentUpload").click();
   });

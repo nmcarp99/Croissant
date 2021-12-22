@@ -49,19 +49,18 @@ function startGame(){
 }
 
 function endGame(){
-    window.location.href = "/";
+    window.location.href = "/create/";
 }
 
 //When server starts the game
 socket.on('gameStarted', function(id){
-    console.log('Game Started!');
     window.location.href="/host/game/" + "?id=" + id;
 });
 
 socket.on('noGameFound', function(){
-   window.location.href = '../../404'; //Redirect user to 'join game' page
+   window.location.href = '/404'; //Redirect user to 'join game' page
 });
 
-socket.on('doesntOwnGame', data => {
-  window.location.href = "../../404";
+socket.on('doesntOwnGame', () => {
+  window.location.href = "/404";
 });

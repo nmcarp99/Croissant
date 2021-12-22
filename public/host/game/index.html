@@ -1,50 +1,71 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Game | Croissant</title>
-        <link rel = "stylesheet" href = "../../css/hostGameView.css">
-        <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css?family=Tajawal" rel="stylesheet">
-    </head>
-    <body>
-        <h4 id = "countdown">3</h4>
-        <h4 id = "questionNum">Question 1 / x</h4>
-        <h4 id = "playersAnswered">Players Answered: 0 / x</h4>
-        <h3 id = "timerText">Time Left:<span id = "num"> 20</span></h3>
-        
-        
-        <div class = "square" id = "square1"></div>
-        <div class = "square" id = "square2"></div>
-        <div class = "square" id = "square3"></div>
-        <div class = "square" id = "square4"></div>
-        
-        <h2 id = "question">Question</h2>
-        <h3 id = "answer1">Answer</h3>
-        <br>
-        <h3 id = "answer2">Answer</h3>
-        <br>
-        <h3 id = "answer3">Answer</h3>
-        <br>
-        <h3 id = "answer4">Answer</h3>
-        
-        <button onclick="openShop()" id = "openShopButton">Open Shop</button>
-        <button onclick = "nextQuestion()" id = "nextQButton">Next Question</button>
-        <button onclick="closeShop()" id = "closeShopButton">Close Shop</button>
-        
-        <h2 id = "winnerTitle">Top 5 Players</h4>
-        <h3 id = "winner1">1.</h3>
-        <h3 id = "winner2">2.</h3>
-        <h3 id = "winner3">3.</h3>
-        <h3 id = "winner4">4.</h3>
-        <h3 id = "winner5">5.</h3>
-      
-        <h2 id = "shop">Shop</h4>
-      
-        
-        
-        <script src = "../../socket.io/socket.io.js"></script>
-        <script src = "../../js/libs/jqueryLibrary.js"></script>
-        <script src = "../../js/libs/deparam.js"></script>
-        <script src = "../../js/hostGame.js"></script>
-    </body>
+  <head>
+    <title>Game | Croissant</title>
+    <link rel="stylesheet" href="/css/hostGameView.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Raleway"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Tajawal"
+      rel="stylesheet"
+    />
+
+    <script src="../../socket.io/socket.io.js"></script>
+    <script src="../../js/libs/jqueryLibrary.js"></script>
+    <script src="../../js/libs/deparam.js"></script>
+    <!--<script src="../../js/hostGame.js"></script>-->
+
+    <script type="text/javascript">
+      window.smartlook ||
+        (function(d) {
+          var o = (smartlook = function() {
+              o.api.push(arguments);
+            }),
+            h = d.getElementsByTagName("head")[0];
+          var c = d.createElement("script");
+          o.api = new Array();
+          c.async = true;
+          c.type = "text/javascript";
+          c.charset = "utf-8";
+          c.src = "https://rec.smartlook.com/recorder.js";
+          h.appendChild(c);
+        })(document);
+      smartlook("init", "a732e6a0bac6cec31a2c28cc07d41ea235a965a5");
+    </script>
+  </head>
+  <body>
+    <h4 id="countdown">3</h4>
+    <h4 id="questionNum">Question 1 / x</h4>
+    <h4 id="playersAnswered">Players Answered: 0 / x</h4>
+    <h3 id="timerText">Time Left:<span id="num"> 20</span></h3>
+
+    <div class="square" id="square1"></div>
+    <div class="square" id="square2"></div>
+    <div class="square" id="square3"></div>
+    <div class="square" id="square4"></div>
+
+    <h2 id="question">Question</h2>
+    <h3 id="answer1">Answer</h3>
+    <br />
+    <h3 id="answer2">Answer</h3>
+    <br />
+    <h3 id="answer3">Answer</h3>
+    <br />
+    <h3 id="answer4">Answer</h3>
+
+    <button onclick="openShop()" id="openShopButton">Open Shop</button>
+    <button onclick="nextQuestion()" id="nextQButton">Next Question</button>
+    <button onclick="closeShop()" id="closeShopButton">Close Shop</button>
+
+    <h2 id="winnerTitle">Top 5 Players</h2>
+    <h3 id="winner1">1.</h3>
+    <h3 id="winner2">2.</h3>
+    <h3 id="winner3">3.</h3>
+    <h3 id="winner4">4.</h3>
+    <h3 id="winner5">5.</h3>
+
+    <h2 id="shop">Shop</h2>
+  </body>
 </html>
