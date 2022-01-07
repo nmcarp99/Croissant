@@ -2,6 +2,87 @@ var socket = io();
 
 var params = jQuery.deparam(window.location.search); //Gets the id from url
 
+var timerInterval;
+
+var currentTimerValue = -1;
+
+//When host connects to server
+socket.on("connect", function() {
+  //Tell server that it is host connection from game view
+  socket.emit("host-join-game", params);
+});
+
+socket.on("gameQuestions", data => {
+  $("#questionText").text(data.question);
+  $("#questionImage").css("background-image", `url('${data.image}')`);
+  
+  startTimer();
+});
+
+socket.on("noGameFound", () => {
+  window.location.href = "/"; //Redirect user to 'join game' page
+});
+
+socket.on("getTime", function(player) {
+  socket.emit("time", {
+    player: player,
+    time: currentTimerValue
+  });
+});
+
+socket.on("questionOver", () => {
+  stopTimer();
+  
+  $("#questionEnd").fadeIn();
+});
+
+function nextQuestion() {
+  socket.emit("nextQuestion");
+  $("#questionEnd").fadeOut();
+}
+
+function updateTimerValue() {
+  $("#timerText").html(currentTimerValue);
+  currentTimerValue--;
+
+  if (currentTimerValue == -1) {
+    clearInterval(timerInterval);
+    
+    socket.emit("timeUp");
+  }
+}
+
+function startTimer() {
+  if (currentTimerValue != -1) return;
+  
+  currentTimerValue = 20;
+  
+  $("#countdownCircle").css("transition", "all 1s ease");
+  
+  $("#countdownCircle").attr("stroke-dasharray", "283 283");
+  
+  setTimeout(() => {
+    $("#countdownCircle").css("transition", "all 20s linear");
+
+    $("#countdownCircle").attr("stroke-dasharray", "0 283");
+
+    updateTimerValue();
+
+    timerInterval = setInterval(() => {
+      updateTimerValue();
+    }, 1000);
+  }, 1000); 
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  currentTimerValue = -1;
+}
+
+/*var socket = io();
+
+var params = jQuery.deparam(window.location.search); //Gets the id from url
+
 var timer;
 
 var time = 20;
@@ -210,3 +291,4 @@ socket.on("getTime", function(player) {
     time: time
   });
 });
+*/
