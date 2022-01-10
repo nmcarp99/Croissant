@@ -52,7 +52,8 @@ body {
   width: 100vw;
   height: 100vh;
   background: radial-gradient(circle at 0% 0%, #373b52, #252736 51%, #1d1e26);
-  /*display: none;*/
+  display: flex;
+  flex-flow: column;
 }
 
 .endQuestionButtons {
@@ -79,13 +80,39 @@ body {
 
 .answerStats {
   display: flex;
-  width: 100%;
   justify-content: center;
+  flex-grow: 1;
 }
 
-.answerStats div {
-  width: 100px;
-  height: 300px;
+.statWrapper {
+  flex-grow: 1;
   margin: 10px;
+  display: flex;
+  flex-flow: column;
+  justify-content: end;
+}
+
+.statWrapper:nth-child(1) .graphWrapper .graph {
+  background: #4CAF50;
+}
+.statWrapper:nth-child(2) .graphWrapper .graph {
+  background: #f94a1e;
+}
+.statWrapper:nth-child(3) .graphWrapper .graph {
+  background: #3399ff;
+}
+.statWrapper:nth-child(4) .graphWrapper .graph {
+  background: #ff9933;
+}
+
+.graphWrapper {
+  flex-grow: 1;
   background: rgba(255, 255, 255, .2);
+  margin: 20px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.graph {
+  flex-grow: 1;
 }
