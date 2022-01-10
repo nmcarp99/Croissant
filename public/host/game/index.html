@@ -12,10 +12,10 @@
       rel="stylesheet"
     />
 
-    <script src="../../socket.io/socket.io.js"></script>
-    <script src="../../js/libs/jqueryLibrary.js"></script>
-    <script src="../../js/libs/deparam.js"></script>
-    <script src="../../js/hostGame.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/libs/jqueryLibrary.js"></script>
+    <script src="/js/libs/deparam.js"></script>
+    <!--<script src="/js/hostGame.js"></script>-->
 
     <script type="text/javascript">
       window.smartlook ||
@@ -38,7 +38,21 @@
   <body>
     <div class="header"></div>
     <div class="questionEnd" id="questionEnd">
-      <button onclick="nextQuestion()">Next &gt</button>
+      <div class="endQuestionHeader">
+        <button onclick="nextQuestion()" class="endQuestionButtons">
+          Next &gt
+        </button>
+        <h1>Time's Up!</h1>
+        <button onclick="nextQuestion()" class="endQuestionButtons">
+          Next &gt
+        </button>
+      </div>
+      <div class="answerStats">
+        <div id="answer1"></div>
+        <div id="answer2"></div>
+        <div id="answer3"></div>
+        <div id="answer4"></div>
+      </div>
     </div>
     <div class="mainContent">
       <div class="question">
