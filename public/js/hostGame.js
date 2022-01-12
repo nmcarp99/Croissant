@@ -30,15 +30,33 @@ socket.on("getTime", function(player) {
   });
 });
 
-socket.on("questionOver", () => {
+socket.on("questionOver", (selectedAnswers, answers) => {
   stopTimer();
   
-  $("#questionEnd").fadeIn();
+  $("#questionEnd").fadeTo(1000, 1.0);
+  
+  var totalAnswers = 0;
+  
+  Object.keys(selectedAnswers).forEach(key => {
+    totalAnswers += selectedAnswers[key];
+  });
+  
+  var graphs = Array.from(document.getElementsByClassName("graph"));
+  
+  graphs.forEach((graph, i) => {
+    graph.style.height = ((Object.values(selectedAnswers)[i] / totalAnswers) * 100) + "%";
+  });
+  
+  var answerTexts = Array.from(document.getElementsByClassName("answerText"));
+  
+  answerTexts.forEach((text, i) => {
+    text.innerHTML = answers[i];
+  });
 });
 
 function nextQuestion() {
   socket.emit("nextQuestion");
-  $("#questionEnd").fadeOut();
+  $("#questionEnd").fadeTo(1000, 0.0);
 }
 
 function updateTimerValue() {

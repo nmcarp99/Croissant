@@ -51,28 +51,10 @@ socket.on("noGameFound", () => {
   });
 });
 
-socket.on("questionOver", (playerData, correctAnswers) => {
+socket.on("questionOver", status => {
   $(".submitted").hide();
-
-  let numCorrect = 0;
-
-  if (selectedAnswers != []) {
-    selectedAnswers.forEach(answer => {
-      if (correctAnswers.includes(answer.toString())) {
-        numCorrect++;
-      }
-    });
-  }
-
-  if (numCorrect == 0 || !playerAnswered) {
-    $(".incorrect").css("display", "flex");
-  } else if (numCorrect != correctAnswers.length) {
-    $(".partialCorrect").css("display", "flex");
-  } else {
-    $(".correct").css("display", "flex");
-  }
-
-  selectedAnswers = [];
+  
+  $("." + status).css("display", "flex");
 
   socket.emit("getScore");
 });
