@@ -1,3 +1,6 @@
+// initialize .env file
+require("dotenv").config();
+
 //Import dependencies
 const path = require("path");
 const http = require("http");
