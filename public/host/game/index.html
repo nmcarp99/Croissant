@@ -12,15 +12,15 @@
       rel="stylesheet"
     />
 
-    <script src="../../socket.io/socket.io.js"></script>
-    <script src="../../js/libs/jqueryLibrary.js"></script>
-    <script src="../../js/libs/deparam.js"></script>
-    <!--<script src="../../js/hostGame.js"></script>-->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/libs/jqueryLibrary.js"></script>
+    <script src="/js/libs/deparam.js"></script>
+    <script src="/js/hostGame.js"></script>
 
     <script type="text/javascript">
       window.smartlook ||
-        (function(d) {
-          var o = (smartlook = function() {
+        (function (d) {
+          var o = (smartlook = function () {
               o.api.push(arguments);
             }),
             h = d.getElementsByTagName("head")[0];
@@ -36,36 +36,74 @@
     </script>
   </head>
   <body>
-    <h4 id="countdown">3</h4>
-    <h4 id="questionNum">Question 1 / x</h4>
-    <h4 id="playersAnswered">Players Answered: 0 / x</h4>
-    <h3 id="timerText">Time Left:<span id="num"> 20</span></h3>
-
-    <div class="square" id="square1"></div>
-    <div class="square" id="square2"></div>
-    <div class="square" id="square3"></div>
-    <div class="square" id="square4"></div>
-
-    <h2 id="question">Question</h2>
-    <h3 id="answer1">Answer</h3>
-    <br />
-    <h3 id="answer2">Answer</h3>
-    <br />
-    <h3 id="answer3">Answer</h3>
-    <br />
-    <h3 id="answer4">Answer</h3>
-
-    <button onclick="openShop()" id="openShopButton">Open Shop</button>
-    <button onclick="nextQuestion()" id="nextQButton">Next Question</button>
-    <button onclick="closeShop()" id="closeShopButton">Close Shop</button>
-
-    <h2 id="winnerTitle">Top 5 Players</h2>
-    <h3 id="winner1">1.</h3>
-    <h3 id="winner2">2.</h3>
-    <h3 id="winner3">3.</h3>
-    <h3 id="winner4">4.</h3>
-    <h3 id="winner5">5.</h3>
-
-    <h2 id="shop">Shop</h2>
+    <div class="header"></div>
+    <div class="questionEnd" id="questionEnd">
+      <div class="endQuestionHeader">
+        <button onclick="nextQuestion()" class="endQuestionButtons">
+          Next &gt
+        </button>
+        <h1>Time's Up!</h1>
+        <button onclick="nextQuestion()" class="endQuestionButtons">
+          Next &gt
+        </button>
+      </div>
+      <div class="message winners">
+        <h1>
+          Game Over
+        </h1>
+        <ol id="winners">
+        </ol>
+      </div>
+      <div class="answerStats">
+        <div id="answer1" class="statWrapper">
+          <div class="graphWrapper"><div class="graph"></div></div>
+          <p class="answerText">test text here</p>
+        </div>
+        <div id="answer2" class="statWrapper">
+          <div class="graphWrapper"><div class="graph"></div></div>
+          <p class="answerText">test text here</p>
+        </div>
+        <div id="answer3" class="statWrapper">
+          <div class="graphWrapper"><div class="graph"></div></div>
+          <p class="answerText">test text here</p>
+        </div>
+        <div id="answer4" class="statWrapper">
+          <div class="graphWrapper"><div class="graph"></div></div>
+          <p class="answerText">test text here</p>
+        </div>
+      </div>
+    </div>
+    <div class="mainContent">
+      <div class="question">
+        <h1 id="questionText">Loading...</h1>
+        <svg width="50" height="50" viewbox="0 0 100 100" class="timer">
+          <path
+            id="countdownCircle"
+            d="
+          M 50, 50
+          m -45, 0
+          a 45,45 0 1,0 90,0
+          a 45,45 0 1,0 -90,0"
+            fill="transparent"
+            stroke="white"
+            stroke-width="10"
+            stroke-dasharray="0 283"
+          ></path>
+          <text
+            id="timerText"
+            font-size="2em"
+            font-family="arial"
+            fill="white"
+            x="50%"
+            y="50%"
+            dominant-baseline="middle"
+            text-anchor="middle"
+          >
+            0
+          </text>
+        </svg>
+      </div>
+      <div id="questionImage" class="imageWrapper"></div>
+    </div>
   </body>
 </html>

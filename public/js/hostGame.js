@@ -2,6 +2,118 @@ var socket = io();
 
 var params = jQuery.deparam(window.location.search); //Gets the id from url
 
+var timerInterval;
+
+var currentTimerValue = -1;
+
+//When host connects to server
+socket.on("connect", function() {
+  //Tell server that it is host connection from game view
+  socket.emit("host-join-game", params);
+});
+
+socket.on("gameQuestions", data => {
+  $("#questionText").text(data.question);
+  $("#questionImage").css("background-image", `url('${data.image}')`);
+  
+  startTimer();
+});
+
+socket.on("noGameFound", () => {
+  window.location.href = "/"; //Redirect user to 'join game' page
+});
+
+socket.on("getTime", function(player) {
+  socket.emit("time", {
+    player: player,
+    time: currentTimerValue
+  });
+});
+
+socket.on("GameOver", winners => {
+  var winnerText = "";
+
+  Object.values(winners).forEach(winner => {
+    winnerText += `<li>${winner.name}: ${winner.score}</li>`;
+  });
+
+  $("#winners").html(winnerText);
+  $(".winners").css("display", "flex");
+});
+
+socket.on("questionOver", (selectedAnswers, answers) => {
+  stopTimer();
+  
+  $("#questionEnd").fadeTo(1000, 1.0);
+  
+  var totalAnswers = 0;
+  
+  Object.keys(selectedAnswers).forEach(key => {
+    totalAnswers += selectedAnswers[key];
+  });
+  
+  var graphs = Array.from(document.getElementsByClassName("graph"));
+  
+  graphs.forEach((graph, i) => {
+    graph.style.height = ((Object.values(selectedAnswers)[i] / totalAnswers) * 100) + "%";
+  });
+  
+  var answerTexts = Array.from(document.getElementsByClassName("answerText"));
+  
+  answerTexts.forEach((text, i) => {
+    text.innerHTML = answers[i];
+  });
+});
+
+function nextQuestion() {
+  socket.emit("nextQuestion");
+  $("#questionEnd").fadeTo(1000, 0.0);
+}
+
+function updateTimerValue() {
+  $("#timerText").html(currentTimerValue);
+  currentTimerValue--;
+
+  if (currentTimerValue == -1) {
+    clearInterval(timerInterval);
+    
+    socket.emit("timeUp");
+  }
+}
+
+function startTimer() {
+  if (currentTimerValue != -1) return;
+  
+  currentTimerValue = 20;
+  
+  $("#timerText").html(currentTimerValue);
+  
+  $("#countdownCircle").css("transition", "all 1s ease");
+  
+  $("#countdownCircle").attr("stroke-dasharray", "283 283");
+  
+  setTimeout(() => {
+    $("#countdownCircle").css("transition", "all 20s linear");
+
+    $("#countdownCircle").attr("stroke-dasharray", "0 283");
+
+    updateTimerValue();
+
+    timerInterval = setInterval(() => {
+      updateTimerValue();
+    }, 1000);
+  }, 1000); 
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  currentTimerValue = -1;
+}
+
+/*var socket = io();
+
+var params = jQuery.deparam(window.location.search); //Gets the id from url
+
 var timer;
 
 var time = 20;
@@ -210,3 +322,4 @@ socket.on("getTime", function(player) {
     time: time
   });
 });
+*/

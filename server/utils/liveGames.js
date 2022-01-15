@@ -3,7 +3,7 @@ class LiveGames {
         this.games = [];
     }
     addGame(pin, hostId, gameLive, gameData){
-        var game = {pin, hostId, gameLive, gameData, joining: false };
+        var game = {pin, hostId, gameLive, gameData, joining: false, selectedAnswers: {1:0, 2:0, 3:0, 4:0} };
         this.games.push(game);
         return game;
     }
