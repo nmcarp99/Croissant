@@ -62,7 +62,7 @@ body {
   padding: 20px 50px;
   border: none;
   color: white;
-  background: #7881A1;
+  background: #7881a1;
   border-radius: 4px;
   cursor: pointer;
 }
@@ -94,7 +94,7 @@ body {
 }
 
 .statWrapper:nth-child(1) .graphWrapper .graph {
-  background: #4CAF50;
+  background: #4caf50;
 }
 .statWrapper:nth-child(2) .graphWrapper .graph {
   background: #f94a1e;
@@ -108,7 +108,7 @@ body {
 
 .graphWrapper {
   flex-grow: 1;
-  background: rgba(255, 255, 255, .2);
+  background: rgba(255, 255, 255, 0.2);
   margin: 20px;
   display: flex;
   align-items: flex-end;
@@ -116,4 +116,9 @@ body {
 
 .graph {
   flex-grow: 1;
+}
+
+p {
+  color: white;
+  font-size: 150%;
 }

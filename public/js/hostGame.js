@@ -30,6 +30,17 @@ socket.on("getTime", function(player) {
   });
 });
 
+socket.on("GameOver", winners => {
+  var winnerText = "";
+
+  Object.values(winners).forEach(winner => {
+    winnerText += `<li>${winner.name}: ${winner.score}</li>`;
+  });
+
+  $("#winners").html(winnerText);
+  $(".winners").css("display", "flex");
+});
+
 socket.on("questionOver", (selectedAnswers, answers) => {
   stopTimer();
   
@@ -74,6 +85,8 @@ function startTimer() {
   if (currentTimerValue != -1) return;
   
   currentTimerValue = 20;
+  
+  $("#timerText").html(currentTimerValue);
   
   $("#countdownCircle").css("transition", "all 1s ease");
   
